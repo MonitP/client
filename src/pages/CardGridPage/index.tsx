@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { getString } from '../consts/strings';
-import detail from '../assets/images/detail.svg';
-import { Server } from '../types/server';
-import DetailServerDialog from './CardGridPage/components/DetailServerDialog';
+import React, { useState, useEffect } from 'react';
+import { getString } from '../../consts/strings';
+import detail from '../../assets/images/detail.svg';
+import { Server } from '../../types/server';
+import DetailServerDialog from './components/DetailServerDialog';
 
 const dummyServers: Server[] = [
   {
@@ -49,14 +49,21 @@ const dummyServers: Server[] = [
 const CardGridPage: React.FC = () => {
   const [selectedServer, setSelectedServer] = useState<Server | null>(null);
 
-  const onDetailClick = (server: Server, e: React.MouseEvent) => {
+  const handleDetailClick = (server: Server, e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log('상세보기 클릭:', server);
     setSelectedServer(server);
   };
 
-  const closeDialog = () => {
+  const handleCloseDialog = () => {
+    console.log('다이얼로그 닫기');
     setSelectedServer(null);
   };
+
+  // selectedServer 상태 변경 시 로그
+  useEffect(() => {
+    console.log('selectedServer 상태 변경:', selectedServer);
+  }, [selectedServer]);
 
   return (
     <>
@@ -70,7 +77,7 @@ const CardGridPage: React.FC = () => {
             <div className="absolute inset-0 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
               <div 
                 className="w-10 h-8 bg-white rounded-md flex items-center justify-center cursor-pointer"
-                onClick={(e) => onDetailClick(server, e)}
+                onClick={(e) => handleDetailClick(server, e)}
               >
                 <img src={detail} alt="상세보기" className="w-5 h-5" />
               </div>
@@ -110,7 +117,7 @@ const CardGridPage: React.FC = () => {
             </div>
 
             {/* 구분선 */}
-            <div className="border-t border-gray-100" />
+            <div className="border-t border-gray-300" />
 
             {/* 프로세스 목록 */}
             <div className="p-4 space-y-3">
@@ -133,8 +140,8 @@ const CardGridPage: React.FC = () => {
       {/* 상세 정보 다이얼로그 */}
       {selectedServer && (
         <DetailServerDialog 
-          server={selectedServer}
-          onClose={closeDialog}
+          server={selectedServer} 
+          onClose={handleCloseDialog} 
         />
       )}
     </>

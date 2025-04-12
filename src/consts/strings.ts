@@ -13,6 +13,12 @@ export const STRINGS = {
       ram: 'RAM',
       disk: 'D드라이브',
     },
+    detail: {
+      title: '서버 상세 정보',
+      status: '서버 상태',
+      resources: '리소스 사용량',
+      processes: '실행 중인 프로세스',
+    },
   },
 } as const;
 
