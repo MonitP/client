@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { IMAGES } from './consts/images';
 import CardGridPage from './pages/CardGridPage';
 import ListViewPage from './pages/ListViewPage';
+import HomePage from './pages/HomePage';
 import { ServerProvider } from './contexts/ServerContext';
 
 const SIDEBAR_ICONS = [
+  { icon: IMAGES.home, component: HomePage },
   { icon: IMAGES.cardGrid, component: CardGridPage },
   { icon: IMAGES.listView, component: ListViewPage },
 ];

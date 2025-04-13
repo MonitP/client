@@ -12,10 +12,12 @@ const CardGridPage: React.FC = () => {
   const onDetailClick = (server: ServerStatus, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedServer(server);
+    console.log('서버 상세 정보 열기:', server);
   };
 
   const closeDialog = () => {
     setSelectedServer(null);
+    console.log('서버 상세 정보 닫기');
   };
 
   return (
@@ -23,7 +25,7 @@ const CardGridPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {servers.map((server) => (
           <div 
-            key={server.agentId} 
+            key={server.serverId} 
             className="bg-white rounded-lg shadow-sm border border-gray-100 relative group hover:shadow-md transition-shadow duration-200"
           >
             {/* 호버 시 상세보기 아이콘 */}
@@ -39,7 +41,7 @@ const CardGridPage: React.FC = () => {
             {/* 서버 헤더 */}
             <div className="p-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-800">{server.agentName}</h3>
+                <h3 className="text-lg font-semibold text-gray-800">{server.serverName}</h3>
                 <div className="flex items-center space-x-2">
                   <div className={`w-2 h-2 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
                   <span className="text-sm text-gray-500">

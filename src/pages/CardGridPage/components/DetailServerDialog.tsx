@@ -46,7 +46,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
         {/* 다이얼로그 헤더 */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-gray-800">{server.agentName}</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">{server.serverName}</h2>
             <button 
               onClick={closeDialog}
               className="text-gray-500 hover:text-gray-700"
@@ -96,7 +96,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
                 <div className="w-24 h-24 mb-2">
                   <CircularProgressbar
-                    value={(server.memory / 1024) * 10} // GB 단위로 변환 후 10GB를 100%로 가정
+                    value={(server.memory / 1024) * 10}
                     text={`${(server.memory / 1024).toFixed(1)}GB`}
                     styles={buildStyles({
                       pathColor: getProgressColor((server.memory / 1024) * 10),

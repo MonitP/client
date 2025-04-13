@@ -5,8 +5,8 @@ export interface ProcessStatus {
 }
 
 export interface ServerStatus {
-  agentId: string;
-  agentName: string;
+  serverId: string;
+  serverName: string;
   status: 'connected' | 'disconnected';
   cpu: number;
   memory: number;
