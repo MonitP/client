@@ -6,10 +6,12 @@ import HomePage from './pages/HomePage';
 import { ServerProvider } from './contexts/ServerContext';
 import { NotificationProvider, useNotifications } from './contexts/NotificationContext';
 import NotificationPage from './pages/NotificationPage';
+import AddPage from './pages/AddPage';
 
 const SIDEBAR_ICONS = [
   { icon: IMAGES.home, component: HomePage },
   { icon: IMAGES.cardGrid, component: CardGridPage },
+  { icon: IMAGES.add, component: AddPage },
   { icon: IMAGES.listView, component: ListViewPage },
   { icon: IMAGES.notification, component: NotificationPage },
 ];
@@ -37,7 +39,7 @@ function Sidebar() {
               }`}
             >
               <img 
-                src={index === 3 && hasUnreadNotifications ? IMAGES.notificationEnabled : item.icon} 
+                src={index === 4 && hasUnreadNotifications ? IMAGES.notificationEnabled : item.icon} 
                 alt={`icon-${index}`} 
                 className="w-6 h-6" 
               />

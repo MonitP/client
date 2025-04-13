@@ -72,6 +72,31 @@ export const STRINGS = {
       title: '경고 상태 서버',
       noWarnings: '경고 상태의 서버가 없습니다.'
     }
+  },
+  add: {
+    title: '서버 추가',
+    form: {
+      required: '이 입력란을 작성하세요',
+      serverName: {
+        label: '서버 이름',
+        placeholder: '서버 이름을 입력하세요'
+      },
+      serverIp: {
+        label: '서버 IP',
+        placeholder: '서버 IP를 입력하세요',
+        error: {
+          korean: '한글은 입력할 수 없습니다.'
+        }
+      },
+      port: {
+        label: '포트',
+        placeholder: '포트를 입력하세요',
+        error: {
+          number: '숫자만 입력할 수 있습니다.'
+        }
+      },
+      submit: '서버 추가'
+    }
   }
 } as const;
 

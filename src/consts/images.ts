@@ -4,6 +4,7 @@ import detail from '../assets/images/detail.svg';
 import home from '../assets/images/home.svg';
 import notification from '../assets/images/notification.svg';
 import notificationEnabled from '../assets/images/notification_enable.svg';
+import add from '../assets/images/add.svg';
 
 export const IMAGES = {
   cardGrid,
@@ -12,6 +13,7 @@ export const IMAGES = {
   home,
   notification,
   notificationEnabled,
+  add,
 } as const;
 
 export type ImageKey = keyof typeof IMAGES; 
