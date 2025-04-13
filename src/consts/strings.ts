@@ -10,8 +10,7 @@ export const STRINGS = {
     },
     resources: {
       cpu: 'CPU',
-      ram: 'RAM',
-      disk: 'D드라이브',
+      memory: '메모리',
     },
     detail: {
       title: '서버 상세 정보',

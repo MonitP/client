@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { getString } from '../../../consts/strings';
-import { Server } from '../../../types/server';
+import { ServerStatus } from '../../../types/server';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { COLORS } from '../../../consts/colors';
 
 interface DetailServerDialogProps {
-  server: Server;
+  server: ServerStatus;
   onClose: () => void;
 }
 
@@ -26,10 +26,18 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
     };
   }, [onClose]);
 
+  useEffect(() => {
+    console.log('DetailServerDialog 마운트됨:', server);
+  }, [server]);
+
   const getProgressColor = (value: number) => {
-    if (value >= 80) return COLORS.red;
-    if (value >= 60) return COLORS.amber;
-    return COLORS.emerald;
+    if (value >= 80) return '#EF4444'; // red-500
+    if (value >= 60) return '#F59E0B'; // amber-500
+    return '#10B981'; // emerald-500
+  };
+
+  const closeDialog = () => {
+    onClose();
   };
 
   return (
@@ -38,9 +46,9 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
         {/* 다이얼로그 헤더 */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-gray-800">{server.name}</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">{server.agentName}</h2>
             <button 
-              onClick={onClose}
+              onClick={closeDialog}
               className="text-gray-500 hover:text-gray-700"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,7 +62,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
         <div className="p-6">
           {/* 상태 정보 */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.status')}</h3>
+            <h3 className="text-lg font-semibold mb-4">서버 상태</h3>
             <div className="flex items-center space-x-2 mb-2">
               <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
               <span className="text-gray-700">
@@ -65,7 +73,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
 
           {/* 리소스 사용량 */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.resources')}</h3>
+            <h3 className="text-lg font-semibold mb-4">리소스 사용량</h3>
             <div className="grid grid-cols-3 gap-4">
               {/* CPU 사용량 */}
               <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
@@ -75,9 +83,9 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                     text={`${server.cpu}%`}
                     styles={buildStyles({
                       pathColor: getProgressColor(server.cpu),
-                      textColor: COLORS.darkGray,
+                      textColor: '#374151',
                       textSize: '24px',
-                      trailColor: COLORS.gray,
+                      trailColor: '#E5E7EB',
                     })}
                   />
                 </div>
@@ -88,30 +96,30 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
                 <div className="w-24 h-24 mb-2">
                   <CircularProgressbar
-                    value={server.ram * 10}
-                    text={`${server.ram}GB`}
+                    value={(server.memory / 1024) * 10} // GB 단위로 변환 후 10GB를 100%로 가정
+                    text={`${(server.memory / 1024).toFixed(1)}GB`}
                     styles={buildStyles({
-                      pathColor: getProgressColor(server.ram * 10),
-                      textColor: COLORS.darkGray,
+                      pathColor: getProgressColor((server.memory / 1024) * 10),
+                      textColor: '#374151',
                       textSize: '24px',
-                      trailColor: COLORS.gray,
+                      trailColor: '#E5E7EB',
                     })}
                   />
                 </div>
-                <div className="text-sm text-gray-500">{getString('server.resources.ram')}</div>
+                <div className="text-sm text-gray-500">{getString('server.resources.memory')}</div>
               </div>
 
               {/* Disk 사용량 */}
               <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
                 <div className="w-24 h-24 mb-2">
                   <CircularProgressbar
-                    value={server.disk}
-                    text={`${server.disk}%`}
+                    value={server.disk || 0}
+                    text={`${server.disk || 0}%`}
                     styles={buildStyles({
-                      pathColor: getProgressColor(server.disk),
-                      textColor: COLORS.darkGray,
+                      pathColor: getProgressColor(server.disk || 0),
+                      textColor: '#374151',
                       textSize: '24px',
-                      trailColor: COLORS.gray,
+                      trailColor: '#E5E7EB',
                     })}
                   />
                 </div>
@@ -122,7 +130,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
 
           {/* 프로세스 목록 */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.processes')}</h3>
+            <h3 className="text-lg font-semibold mb-4">실행 중인 프로세스</h3>
             <div className="space-y-3">
               {server.processes.map((process) => (
                 <div key={process.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">

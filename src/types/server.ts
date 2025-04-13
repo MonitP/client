@@ -1,15 +1,16 @@
-export interface Process {
-  id: number;
+export interface ProcessStatus {
+  id: string;
   name: string;
   status: 'running' | 'stopped';
 }
 
-export interface Server {
-  id: number;
-  name: string;
+export interface ServerStatus {
+  agentId: string;
+  agentName: string;
   status: 'connected' | 'disconnected';
   cpu: number;
-  ram: number;
+  memory: number;
   disk: number;
-  processes: Process[];
+  processes: ProcessStatus[];
+  lastUpdate: Date;
 } 
