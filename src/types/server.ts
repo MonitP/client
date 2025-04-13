@@ -13,4 +13,6 @@ export interface ServerStatus {
   disk: number;
   processes: ProcessStatus[];
   lastUpdate: Date;
+  cpuHistory: number[];
+  memoryHistory: number[];
 } 

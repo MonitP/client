@@ -18,6 +18,11 @@ export const STRINGS = {
       status: '서버 상태',
       resources: '리소스 사용량',
       processes: '실행 중인 프로세스',
+      history: {
+        title: '리소스 사용량 추이 (24시간)',
+        cpu: 'CPU 사용량 (%)',
+        memory: '메모리 사용량 (%)'
+      }
     },
   },
   home: {

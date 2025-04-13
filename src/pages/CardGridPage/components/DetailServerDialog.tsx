@@ -4,6 +4,27 @@ import { ServerStatus } from '../../../types/server';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { COLORS } from '../../../consts/colors';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface DetailServerDialogProps {
   server: ServerStatus;
@@ -62,7 +83,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
         <div className="p-6">
           {/* 상태 정보 */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4">서버 상태</h3>
+            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.status')}</h3>
             <div className="flex items-center space-x-2 mb-2">
               <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
               <span className="text-gray-700">
@@ -73,7 +94,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
 
           {/* 리소스 사용량 */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4">리소스 사용량</h3>
+            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.resources')}</h3>
             <div className="grid grid-cols-3 gap-4">
               {/* CPU 사용량 */}
               <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
@@ -129,8 +150,8 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
           </div>
 
           {/* 프로세스 목록 */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">실행 중인 프로세스</h3>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.processes')}</h3>
             <div className="space-y-3">
               {server.processes.map((process) => (
                 <div key={process.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -143,6 +164,52 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* 리소스 사용량 추이 */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.history.title')}</h3>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <Line
+                data={{
+                  labels: Array.from({ length: 24 }, (_, i) => `${i}시`),
+                  datasets: [
+                    {
+                      label: getString('server.detail.history.cpu'),
+                      data: server.cpuHistory || Array(24).fill(0),
+                      borderColor: '#EF4444',
+                      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                      tension: 0.4,
+                    },
+                    {
+                      label: getString('server.detail.history.memory'),
+                      data: (server.memoryHistory || Array(24).fill(0)).map(v => Number((v / 16384 * 100).toFixed(1))),
+                      borderColor: '#3B82F6',
+                      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                      tension: 0.4,
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: 'top' as const,
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      min: 0,
+                      max: 100,
+                      ticks: {
+                        stepSize: 10
+                      }
+                    },
+                  },
+                }}
+              />
             </div>
           </div>
         </div>
