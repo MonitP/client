@@ -19,11 +19,27 @@ export const STRINGS = {
       resources: '리소스 사용량',
       processes: '실행 중인 프로세스',
       history: {
-        title: '리소스 사용량 추이 (24시간)',
-        cpu: 'CPU 사용량 (%)',
-        memory: '메모리 사용량 (%)'
+        title: '리소스 사용량 추이',
+        cpu: 'CPU 사용률',
+        memory: '메모리 사용률'
       }
     },
+  },
+  notification: {
+    types: {
+      cpu: 'CPU 사용량',
+      memory: '메모리 사용량',
+      connection: '연결 상태',
+      default: '일반'
+    },
+    page: {
+      title: '알림',
+      searchPlaceholder: '서버 이름 또는 내용 검색',
+      markAllAsRead: '모두 읽음으로 표시',
+      markAsRead: '읽음으로 표시',
+      noNotifications: '새로운 알림이 없습니다.',
+      noSearchResults: '검색 결과가 없습니다.'
+    }
   },
   home: {
     summary: {
