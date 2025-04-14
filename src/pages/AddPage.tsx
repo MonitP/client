@@ -1,29 +1,31 @@
 import React, { useState } from 'react';
 import { getString } from '../consts/strings';
+import { serverApi } from '../services/api';
+import { AddServerRequest } from '../types/server';
 
 const AddPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    serverName: '',
-    serverIp: '',
+  const [formData, setFormData] = useState<AddServerRequest>({
+    name: '',
+    ip: '',
     port: '',
   });
 
   const [errors, setErrors] = useState({
-    serverName: '',
-    serverIp: '',
+    name: '',
+    ip: '',
     port: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    if (name === 'serverIp') {
+    if (name === 'ip') {
       const koreanRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
       if (koreanRegex.test(value)) {
-        setErrors(prev => ({ ...prev, serverIp: getString('add.form.serverIp.error.korean') }));
+        setErrors(prev => ({ ...prev, ip: getString('add.form.serverIp.error.korean') }));
         return;
       }
-      setErrors(prev => ({ ...prev, serverIp: '' }));
+      setErrors(prev => ({ ...prev, ip: '' }));
     }
     
     if (name === 'port') {
@@ -44,16 +46,16 @@ const AddPage: React.FC = () => {
 
   const validateForm = () => {
     const newErrors = {
-      serverName: '',
-      serverIp: '',
+      name: '',
+      ip: '',
       port: ''
     };
 
-    if (!formData.serverName) {
-      newErrors.serverName = getString('add.form.required');
+    if (!formData.name) {
+      newErrors.name = getString('add.form.required');
     }
-    if (!formData.serverIp) {
-      newErrors.serverIp = getString('add.form.required');
+    if (!formData.ip) {
+      newErrors.ip = getString('add.form.required');
     }
     if (!formData.port) {
       newErrors.port = getString('add.form.required');
@@ -63,11 +65,16 @@ const AddPage: React.FC = () => {
     return Object.values(newErrors).every(error => !error);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // TODO: API 호출 구현
-      console.log('서버 정보:', formData);
+      try {
+        await serverApi.add(formData);
+        // TODO: 성공 시 처리 (예: 리다이렉트 또는 토스트 메시지)
+      } catch (error) {
+        // TODO: 에러 처리 (예: 토스트 메시지)
+        console.error('서버 추가 실패:', error);
+      }
     }
   };
 
@@ -77,42 +84,42 @@ const AddPage: React.FC = () => {
       
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <div>
-          <label htmlFor="serverName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
             {getString('add.form.serverName.label')}
           </label>
           <input
             type="text"
-            id="serverName"
-            name="serverName"
-            value={formData.serverName}
+            id="name"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-              errors.serverName ? 'border-red-500' : 'border-gray-300'
+              errors.name ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder={getString('add.form.serverName.placeholder')}
           />
-          {errors.serverName && (
-            <p className="mt-1 text-sm text-red-500">{errors.serverName}</p>
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-500">{errors.name}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="serverIp" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="ip" className="block text-sm font-medium text-gray-700 mb-1">
             {getString('add.form.serverIp.label')}
           </label>
           <input
             type="text"
-            id="serverIp"
-            name="serverIp"
-            value={formData.serverIp}
+            id="ip"
+            name="ip"
+            value={formData.ip}
             onChange={handleChange}
             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-              errors.serverIp ? 'border-red-500' : 'border-gray-300'
+              errors.ip ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder={getString('add.form.serverIp.placeholder')}
           />
-          {errors.serverIp && (
-            <p className="mt-1 text-sm text-red-500">{errors.serverIp}</p>
+          {errors.ip && (
+            <p className="mt-1 text-sm text-red-500">{errors.ip}</p>
           )}
         </div>
 
@@ -135,7 +142,6 @@ const AddPage: React.FC = () => {
             <p className="mt-1 text-sm text-red-500">{errors.port}</p>
           )}
         </div>
-
         <div className="flex justify-end">
           <button
             type="submit"

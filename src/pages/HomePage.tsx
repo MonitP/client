@@ -1,22 +1,43 @@
-import React from 'react';
-import { useServers } from '../contexts/ServerContext';
+import React, { useEffect, useState } from 'react';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { getString } from '../consts/strings';
+import { serverApi } from '../services/api';
+import { ServerStatus } from '../types/server';
 
 const HomePage: React.FC = () => {
-  const { servers } = useServers();
+  const [servers, setServers] = useState<ServerStatus[]>([]);
+
+  useEffect(() => {
+    const fetchServers = async () => {
+      try {
+        const data = await serverApi.getAllData() as ServerStatus[];
+        console.log('Received server data:', data);
+        setServers(data);
+      } catch (error) {
+        console.error('서버 데이터 가져오기 실패:', error);
+      }
+    };
+
+    fetchServers();
+  }, []);
 
   const stats = {
     total: servers.length,
     connected: servers.filter(s => s.status === 'connected').length,
     disconnected: servers.filter(s => s.status === 'disconnected').length,
-    avgCpu: servers.reduce((acc, s) => acc + s.cpu, 0) / servers.length || 0,
-    avgMemory: servers.reduce((acc, s) => acc + s.memory, 0) / servers.length || 0,
-    totalProcesses: servers.reduce((acc, s) => acc + s.processes.length, 0),
-    runningProcesses: servers.reduce((acc, s) => 
-      acc + s.processes.filter(p => p.status === 'running').length, 0
-    ),
+    avgCpu: servers.length > 0 ? servers.reduce((acc, s) => acc + s.cpu, 0) / servers.length : 0,
+    avgMemory: servers.length > 0 ? servers.reduce((acc, s) => acc + s.memory, 0) / servers.length : 0,
+    totalProcesses: servers.length > 0
+    ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
+    : 0,
+  runningProcesses: servers.length > 0
+    ? servers.reduce(
+        (acc, s) => acc + (s.processes?.filter(p => p.status === 'running').length ?? 0),
+        0
+      )
+    : 0,
+  
   };
 
   return (

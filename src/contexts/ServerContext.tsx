@@ -4,9 +4,10 @@ import { socketService } from '../services/socket';
 
 interface ServerContextType {
   servers: ServerStatus[];
+  setServers: React.Dispatch<React.SetStateAction<ServerStatus[]>>;
 }
 
-const ServerContext = createContext<ServerContextType>({ servers: [] });
+const ServerContext = createContext<ServerContextType>({ servers: [], setServers: () => {} });
 
 export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [servers, setServers] = useState<ServerStatus[]>([]);
@@ -27,7 +28,7 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   return (
-    <ServerContext.Provider value={{ servers }}>
+    <ServerContext.Provider value={{ servers, setServers }}>
       {children}
     </ServerContext.Provider>
   );
