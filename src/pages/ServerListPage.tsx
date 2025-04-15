@@ -60,13 +60,16 @@ const ServerListPage: React.FC = () => {
                 server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'
               }`} />
               <div className="flex items-center w-full">
-                <div className="w-1/3 px-4">
+                <div className="w-1/4 px-4">
                   <h3 className="text-lg font-semibold truncate">{server.name}</h3>
                 </div>
-                <div className="w-1/3 px-4 border-l border-gray-200">
+                <div className="w-1/4 px-4 border-l border-gray-200">
+                  <span className="text-sm text-gray-500 truncate">{server.code}</span>
+                </div>
+                <div className="w-1/4 px-4 border-l border-gray-200">
                   <span className="text-sm text-gray-500 truncate">{server.ip}</span>
                 </div>
-                <div className="w-1/3 px-4 border-l border-gray-200">
+                <div className="w-1/4 px-4 border-l border-gray-200">
                   <span className="text-sm text-gray-500">{server.port}</span>
                 </div>
               </div>
@@ -92,7 +95,7 @@ const ServerListPage: React.FC = () => {
       ))}
       {servers.length === 0 && (
         <div className="text-center text-gray-500 py-4">
-          {getString('home.issues.noIssues')}
+          {getString('home.issues.noServers')}
         </div>
       )}
       {deleteTargetId && (

@@ -70,7 +70,8 @@ export const STRINGS = {
         cpu: 'CPU',
         memory: '메모리'
       },
-      noIssues: '문제가 발생한 서버가 없습니다.'
+      noIssues: '문제가 발생한 서버가 없습니다.',
+      noServers: '등록한 서버가 없습니다.',
     },
     warnings: {
       title: '경고 상태 서버',
@@ -84,6 +85,10 @@ export const STRINGS = {
       serverName: {
         label: '서버 이름',
         placeholder: '서버 이름을 입력하세요'
+      },
+      serverCode: {
+        label: '서버 코드',
+        placeholder: '서버 코드를 입력하세요'
       },
       serverIp: {
         label: '서버 IP',

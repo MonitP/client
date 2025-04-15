@@ -10,12 +10,14 @@ const AddPage: React.FC = () => {
 
   const [formData, setFormData] = useState<AddServerRequest>({
     name: '',
+    code: '',
     ip: '',
     port: '',
   });
 
   const [errors, setErrors] = useState({
     name: '',
+    code: '',
     ip: '',
     port: ''
   });
@@ -53,12 +55,16 @@ const AddPage: React.FC = () => {
   const validateForm = () => {
     const newErrors = {
       name: '',
+      code: '',
       ip: '',
       port: ''
     };
 
     if (!formData.name) {
       newErrors.name = getString('add.form.required');
+    }
+    if (!formData.code) {
+      newErrors.code = getString('add.form.required');
     }
     if (!formData.ip) {
       newErrors.ip = getString('add.form.required');
@@ -78,7 +84,7 @@ const AddPage: React.FC = () => {
         const newServer = await serverApi.add(formData) as ServerStatus;
         addServer(newServer);
         setToastMessage({ text: getString('add.form.success'), id: Date.now() });
-        setFormData({ name: '', ip: '', port: '' });
+        setFormData({ name: '', code: '', ip: '', port: '' });
       } catch (error) {
         console.error('서버 추가 실패:', error);
       }
@@ -108,6 +114,26 @@ const AddPage: React.FC = () => {
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
+            {getString('add.form.serverCode.label')}
+          </label>
+          <input
+            type="text"
+            id="code"
+            name="code"
+            value={formData.code}
+            onChange={handleChange}
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              errors.code ? 'border-red-500' : 'border-gray-300'
+            }`}
+            placeholder={getString('add.form.serverCode.placeholder')}
+          />
+          {errors.code && (
+            <p className="mt-1 text-sm text-red-500">{errors.code}</p>
           )}
         </div>
 

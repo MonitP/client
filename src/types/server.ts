@@ -7,6 +7,7 @@ export interface ProcessStatus {
 export interface ServerStatus {
   id: string;
   name: string;
+  code: string;
   ip: string;
   port: number;
   status: 'connected' | 'disconnected' | 'error';
@@ -24,6 +25,7 @@ export interface ServerStatus {
 export interface Server {
   id: string;
   name: string;
+  code: string;
   ip: string;
   port: string;
   lastChecked: string;
@@ -31,6 +33,7 @@ export interface Server {
 
 export interface AddServerRequest {
   name: string;
+  code: string;
   ip: string;
   port: string;
 }
@@ -38,6 +41,7 @@ export interface AddServerRequest {
 export interface AddServerResponse {
   id: string;
   name: string;
+  code: string;
   ip: string;
   port: string;
 } 
