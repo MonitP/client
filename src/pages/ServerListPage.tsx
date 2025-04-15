@@ -36,7 +36,7 @@ const ServerListPage: React.FC = () => {
     setDeleteTargetId(null);
   };
 
-  const handleEdit = async (data: { name: string; ip: string; port: string }) => {
+  const handleEdit = async (data: { name: string; code: string; ip: string; port: string }) => {
     if (editTarget) {
       try {
         await serverApi.update(editTarget.id, data);

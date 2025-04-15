@@ -9,7 +9,6 @@ class SocketService {
   private eventHandlers: Map<string, Set<(...args: any[]) => void>> = new Map();
 
   private constructor() {
-    // private constructor to enforce singleton
   }
 
   static getInstance(): SocketService {
@@ -35,16 +34,13 @@ class SocketService {
     });
 
     this.socket.on('connect', () => {
-      console.log('Connected to server');
       this.isConnecting = false;
     });
 
     this.socket.on('disconnect', () => {
-      console.log('Disconnected from server');
     });
 
     this.socket.on('connect_error', (error) => {
-      console.error('Connection error:', error);
       this.isConnecting = false;
     });
 
@@ -71,7 +67,9 @@ class SocketService {
     if (!this.socket) {
       this.connect();
     }
-    this.socket?.on('update', callback);
+    this.socket?.on('update', (data: ServerStatus[]) => {
+      callback(data);
+    });
   }
 
   offServerStats(callback: (servers: ServerStatus[]) => void) {
@@ -86,7 +84,6 @@ class SocketService {
       this.connect();
     }
 
-    // Store the event handler
     if (!this.eventHandlers.has(event)) {
       this.eventHandlers.set(event, new Set());
     }
