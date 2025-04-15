@@ -63,12 +63,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const lastUsage = lastCpuUsage[serverName] || 0;
     const isHighUsage = usage >= 60;
     const wasHighUsage = lastUsage >= 60;
-    const server = servers.find(s => s.serverName === serverName);
+    const server = servers.find(s => s.name === serverName);
 
     if (isHighUsage && !wasHighUsage) {
       addNotification({
         type: 'cpu',
-        serverId: server?.serverId || '',
+        serverId: server?.id || '',
         serverName,
         message: `${getString('notification.types.cpu')} 사용량이 ${usage.toFixed(1)}%로 높습니다.`,
         timestamp: Date.now(),
@@ -76,7 +76,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } else if (!isHighUsage && wasHighUsage) {
       addNotification({
         type: 'cpu',
-        serverId: server?.serverId || '',
+        serverId: server?.id || '',
         serverName,
         message: `${getString('notification.types.cpu')} 사용량이 ${usage.toFixed(1)}%로 정상화되었습니다.`,
         timestamp: Date.now(),
@@ -91,12 +91,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const lastUsage = lastMemoryUsage[serverName] || 0;
     const isHighUsage = usage >= 60;
     const wasHighUsage = lastUsage >= 60;
-    const server = servers.find(s => s.serverName === serverName);
+    const server = servers.find(s => s.name === serverName);
 
     if (isHighUsage && !wasHighUsage) {
       addNotification({
         type: 'memory',
-        serverId: server?.serverId || '',
+        serverId: server?.id || '',
         serverName,
         message: `${getString('notification.types.memory')} 사용량이 ${usage.toFixed(1)}%로 높습니다.`,
         timestamp: Date.now(),
@@ -104,7 +104,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } else if (!isHighUsage && wasHighUsage) {
       addNotification({
         type: 'memory',
-        serverId: server?.serverId || '',
+        serverId: server?.id || '',
         serverName,
         message: `${getString('notification.types.memory')} 사용량이 ${usage.toFixed(1)}%로 정상화되었습니다.`,
         timestamp: Date.now(),
@@ -117,12 +117,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // 연결 상태 모니터링
   const handleConnectionStatus = useCallback((serverName: string, isConnected: boolean) => {
     const lastStatus = lastConnectionStatus[serverName];
-    const server = servers.find(s => s.serverName === serverName);
+    const server = servers.find(s => s.name === serverName);
     
     if (lastStatus === undefined || lastStatus !== isConnected) {
       addNotification({
         type: 'connection',
-        serverId: server?.serverId || '',
+        serverId: server?.id || '',
         serverName,
         message: isConnected 
           ? `${getString('notification.types.connection')}가 복구되었습니다.`
@@ -146,9 +146,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     const handleServerUpdate = (updatedServers: ServerStatus[]) => {
       updatedServers.forEach(server => {
-        handleCpuUsage(server.serverName, server.cpu);
-        handleMemoryUsage(server.serverName, server.memory);
-        handleConnectionStatus(server.serverName, server.status === 'connected');
+        handleCpuUsage(server.name, server.cpu);
+        handleMemoryUsage(server.name, server.memory);
+        handleConnectionStatus(server.name, server.status === 'connected');
       });
     };
 

@@ -4,30 +4,17 @@ import 'react-circular-progressbar/dist/styles.css';
 import { getString } from '../consts/strings';
 import { serverApi } from '../services/api';
 import { ServerStatus } from '../types/server';
+import { useServers } from '../contexts/ServerContext';
 
 const HomePage: React.FC = () => {
-  const [servers, setServers] = useState<ServerStatus[]>([]);
-
-  useEffect(() => {
-    const fetchServers = async () => {
-      try {
-        const data = await serverApi.getAllData() as ServerStatus[];
-        console.log('Received server data:', data);
-        setServers(data);
-      } catch (error) {
-        console.error('서버 데이터 가져오기 실패:', error);
-      }
-    };
-
-    fetchServers();
-  }, []);
+  const { servers } = useServers();
 
   const stats = {
     total: servers.length,
     connected: servers.filter(s => s.status === 'connected').length,
     disconnected: servers.filter(s => s.status === 'disconnected').length,
-    avgCpu: servers.length > 0 ? servers.reduce((acc, s) => acc + s.cpu, 0) / servers.length : 0,
-    avgMemory: servers.length > 0 ? servers.reduce((acc, s) => acc + s.memory, 0) / servers.length : 0,
+    avgCpu: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.cpu || 0), 0) / servers.length : 0,
+    avgMemory: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.memory || 0), 0) / servers.length : 0,
     totalProcesses: servers.length > 0
     ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
     : 0,
@@ -111,23 +98,23 @@ const HomePage: React.FC = () => {
             {servers
               .filter(server => server.status === 'disconnected' || server.cpu > 80 || server.memory > 8192)
               .map(server => (
-                <div key={server.serverId} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
+                <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
                     <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
                     <div className="min-w-[150px]">
-                      <h4 className="font-medium text-gray-800">{server.serverName}</h4>
+                      <h4 className="font-medium text-gray-800">{server.name}</h4>
                     </div>
                     <div className="flex space-x-4">
                       <p className="text-sm text-gray-500 whitespace-nowrap">
-                        {getString('home.issues.stats.cpu')}: {server.cpu}%
+                        {getString('home.issues.stats.cpu')}: {server.cpu || 0}%
                       </p>
                       <p className="text-sm text-gray-500 whitespace-nowrap">
-                        {getString('home.issues.stats.memory')}: {(server.memory / 1024).toFixed(1)}GB
+                        {getString('home.issues.stats.memory')}: {server.memory ? (server.memory / 1024).toFixed(1) : 0}GB
                       </p>
                     </div>
                   </div>
                   <div className="text-sm text-gray-500 whitespace-nowrap">
-                    {new Date(server.lastUpdate).toLocaleString()}
+                    {new Date(server.lastUpdate || Date.now()).toLocaleString()}
                   </div>
                 </div>
               ))}
@@ -147,11 +134,11 @@ const HomePage: React.FC = () => {
               .filter(server => server.status === 'connected' && 
                 ((server.cpu > 60 && server.cpu <= 80) || (server.memory > 6144 && server.memory <= 8192)))
               .map(server => (
-                <div key={server.serverId} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
+                <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
                     <div className="min-w-[150px]">
-                      <h4 className="font-medium text-gray-800">{server.serverName}</h4>
+                      <h4 className="font-medium text-gray-800">{server.name}</h4>
                     </div>
                     <div className="flex space-x-4">
                       <p className="text-sm text-gray-500 whitespace-nowrap">
@@ -163,7 +150,7 @@ const HomePage: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-sm text-gray-500 whitespace-nowrap">
-                    {new Date(server.lastUpdate).toLocaleString()}
+                    {new Date(server.lastUpdate || Date.now()).toLocaleString()}
                   </div>
                 </div>
               ))}

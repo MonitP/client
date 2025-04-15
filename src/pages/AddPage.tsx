@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { getString } from '../consts/strings';
 import { serverApi } from '../services/api';
-import { AddServerRequest } from '../types/server';
+import { AddServerRequest, ServerStatus } from '../types/server';
+import Toast from '../components/Toast';
+import { useServers } from '../contexts/ServerContext';
 
 const AddPage: React.FC = () => {
+  const { addServer } = useServers();
+
   const [formData, setFormData] = useState<AddServerRequest>({
     name: '',
     ip: '',
@@ -15,6 +19,8 @@ const AddPage: React.FC = () => {
     ip: '',
     port: ''
   });
+
+  const [toastMessage, setToastMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -69,10 +75,11 @@ const AddPage: React.FC = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        await serverApi.add(formData);
-        // TODO: 성공 시 처리 (예: 리다이렉트 또는 토스트 메시지)
+        const newServer = await serverApi.add(formData) as ServerStatus;
+        addServer(newServer);
+        setToastMessage('add.form.submit');
+        setFormData({ name: '', ip: '', port: '' });
       } catch (error) {
-        // TODO: 에러 처리 (예: 토스트 메시지)
         console.error('서버 추가 실패:', error);
       }
     }
@@ -80,6 +87,7 @@ const AddPage: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
+      <Toast message={toastMessage} />
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">{getString('add.title')}</h2>
       
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>

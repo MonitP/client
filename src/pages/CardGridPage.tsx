@@ -12,7 +12,7 @@ const CardGridPage: React.FC = () => {
   const onDetailClick = (server: ServerStatus, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedServer(server);
-    console.log('서버 상세 정보 열기:', server);
+    console.log('서버 상세 정보 열기:', server.status);
   };
 
   const closeDialog = () => {
@@ -25,7 +25,7 @@ const CardGridPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {servers.map((server) => (
           <div 
-            key={server.serverId} 
+            key={server.id} 
             className="bg-white rounded-lg shadow-sm border border-gray-100 relative group hover:shadow-md transition-shadow duration-200"
           >
             {/* 호버 시 상세보기 아이콘 */}
@@ -41,7 +41,7 @@ const CardGridPage: React.FC = () => {
             {/* 서버 헤더 */}
             <div className="p-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-800">{server.serverName}</h3>
+                <h3 className="text-lg font-semibold text-gray-800">{server.name}</h3>
                 <div className="flex items-center space-x-2">
                   <div className={`w-2 h-2 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
                   <span className="text-sm text-gray-500">
@@ -56,12 +56,12 @@ const CardGridPage: React.FC = () => {
               <div className="flex items-center space-x-4 text-sm">
                 <div className="flex items-center space-x-2">
                   <span className="text-gray-500">{getString('server.resources.cpu')}</span>
-                  <span className="font-medium text-gray-700">{server.cpu}%</span>
+                  <span className="font-medium text-gray-700">{server.cpu || 0}%</span>
                 </div>
                 <div className="w-px h-4 bg-gray-200" />
                 <div className="flex items-center space-x-2">
                   <span className="text-gray-500">{getString('server.resources.memory')}</span>
-                  <span className="font-medium text-gray-700">{(server.memory / 1024).toFixed(1)}GB</span>
+                  <span className="font-medium text-gray-700">{server.memory ? (server.memory / 1024).toFixed(1) : 0}GB</span>
                 </div>
               </div>
             </div>
@@ -98,4 +98,4 @@ const CardGridPage: React.FC = () => {
   );
 };
 
-export default CardGridPage; 
+export default CardGridPage;

@@ -95,7 +95,8 @@ export const STRINGS = {
           number: '숫자만 입력할 수 있습니다.'
         }
       },
-      submit: '서버 추가'
+      submit: '서버 추가',
+      success: '서버가 추가되었습니다.'
     }
   }
 } as const;
