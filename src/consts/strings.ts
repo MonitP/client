@@ -1,4 +1,7 @@
 export const STRINGS = {
+  serverCard: {
+    title: '서버 상태 보기',
+  },
   server: {
     status: {
       connected: '연결됨',
@@ -42,6 +45,7 @@ export const STRINGS = {
     }
   },
   home: {
+    title: '홈',
     summary: {
       totalServers: '전체 서버',
       connectedServers: '정상 서버',

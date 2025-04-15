@@ -20,8 +20,8 @@ const AddPage: React.FC = () => {
     port: ''
   });
 
-  const [toastMessage, setToastMessage] = useState('');
-
+  const [toastMessage, setToastMessage] = useState<{ text: string; id: number } | null>(null);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
@@ -77,7 +77,7 @@ const AddPage: React.FC = () => {
       try {
         const newServer = await serverApi.add(formData) as ServerStatus;
         addServer(newServer);
-        setToastMessage(getString('add.form.success'));
+        setToastMessage({ text: getString('add.form.success'), id: Date.now() });
         setFormData({ name: '', ip: '', port: '' });
       } catch (error) {
         console.error('서버 추가 실패:', error);

@@ -30,6 +30,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="h-full overflow-auto pb-6">
       <div className="space-y-6">
+      <h2 className="text-2xl font-semibold text-gray-800">{getString('home.title')}</h2>
         {/* 전체 시스템 상태 요약 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-lg shadow p-6">

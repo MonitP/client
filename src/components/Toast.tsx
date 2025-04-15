@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { COLORS } from '../consts/colors';
 
 interface ToastProps {
-  message: string;
+  message: { text: string; id: number } | null;
 }
 
 const Toast: React.FC<ToastProps> = ({ message }) => {
@@ -16,16 +16,16 @@ const Toast: React.FC<ToastProps> = ({ message }) => {
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [message]);
+  }, [message?.id]);
 
-  if (!visible) return null;
+  if (!visible || !message) return null;
 
   return (
     <div
-      className="fixed top-4 left-1/2 transform -translate-x-1/2 text-white px-4 py-2 rounded shadow-lg"
+      className="fixed top-4 left-1/2 transform -translate-x-1/2 text-white px-4 py-2 rounded shadow-lg z-50"
       style={{ backgroundColor: COLORS.main }}
     >
-      {message}
+      {message.text}
     </div>
   );
 };

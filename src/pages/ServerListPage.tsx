@@ -12,7 +12,8 @@ const ServerListPage: React.FC = () => {
   const { servers, refreshServers } = useServers();
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<ServerStatus | null>(null);
-  const [toastMessage, setToastMessage] = useState('');
+  const [toastMessage, setToastMessage] = useState<{ text: string; id: number } | null>(null);
+
 
   const onYesClicked = async (id: string) => {
     setDeleteTargetId(id);
@@ -22,7 +23,7 @@ const ServerListPage: React.FC = () => {
     if (deleteTargetId) {
       try {
         await serverApi.delete(deleteTargetId);
-        setToastMessage(getString('list.deleteSuccess'));
+        setToastMessage({ text: getString('list.deleteSuccess'), id: Date.now() });
         await refreshServers();
       } catch (error) {
         console.error('서버 삭제 실패:', error);
@@ -39,7 +40,7 @@ const ServerListPage: React.FC = () => {
     if (editTarget) {
       try {
         await serverApi.update(editTarget.id, data);
-        setToastMessage(getString('list.editSuccess'));
+        setToastMessage({ text: getString('list.editSuccess'), id: Date.now() });
         await refreshServers();
       } catch (error) {
         console.error('서버 수정 실패:', error);
@@ -50,6 +51,7 @@ const ServerListPage: React.FC = () => {
   return (
     <div className="space-y-4">
       <Toast message={toastMessage} />
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">{getString('serverCard.title')}</h2>
       {servers.map((server) => (
         <div key={server.id} className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between">
