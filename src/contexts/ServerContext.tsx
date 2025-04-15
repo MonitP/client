@@ -6,28 +6,34 @@ interface ServerContextType {
   servers: ServerStatus[];
   setServers: React.Dispatch<React.SetStateAction<ServerStatus[]>>;
   addServer: (newServer: ServerStatus) => void;
+  refreshServers: () => Promise<void>;
 }
 
-const ServerContext = createContext<ServerContextType>({ servers: [], setServers: () => {}, addServer: () => {} });
+const ServerContext = createContext<ServerContextType>({ 
+  servers: [], 
+  setServers: () => {}, 
+  addServer: () => {},
+  refreshServers: async () => {}
+});
 
 export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [servers, setServers] = useState<ServerStatus[]>([]);
 
-  useEffect(() => {
-    const fetchServers = async () => {
-      try {
-        const data = await serverApi.getAllData() as ServerStatus[];
-        const updatedData = data.map(server => ({
-          ...server,
-          status: server.status || 'disconnected',
-        }));
-        setServers(updatedData);
-      } catch (error) {
-        console.error('서버 데이터 가져오기 실패:', error);
-      }
-    };
+  const refreshServers = async () => {
+    try {
+      const data = await serverApi.getAllData() as ServerStatus[];
+      const updatedData = data.map(server => ({
+        ...server,
+        status: server.status || 'disconnected',
+      }));
+      setServers(updatedData);
+    } catch (error) {
+      console.error('서버 데이터 가져오기 실패:', error);
+    }
+  };
 
-    fetchServers();
+  useEffect(() => {
+    refreshServers();
   }, []);
 
   const addServer = (newServer: ServerStatus) => {
@@ -39,7 +45,7 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   return (
-    <ServerContext.Provider value={{ servers, setServers, addServer }}>
+    <ServerContext.Provider value={{ servers, setServers, addServer, refreshServers }}>
       {children}
     </ServerContext.Provider>
   );

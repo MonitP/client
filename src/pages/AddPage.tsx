@@ -77,7 +77,7 @@ const AddPage: React.FC = () => {
       try {
         const newServer = await serverApi.add(formData) as ServerStatus;
         addServer(newServer);
-        setToastMessage('add.form.submit');
+        setToastMessage(getString('add.form.success'));
         setFormData({ name: '', ip: '', port: '' });
       } catch (error) {
         console.error('서버 추가 실패:', error);

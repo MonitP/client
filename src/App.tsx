@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IMAGES } from './consts/images';
 import CardGridPage from './pages/CardGridPage';
-import ListViewPage from './pages/ListViewPage';
+import ListViewPage from './pages/ServerListPage';
 import HomePage from './pages/HomePage';
 import { ServerProvider } from './contexts/ServerContext';
 import { NotificationProvider, useNotifications } from './contexts/NotificationContext';

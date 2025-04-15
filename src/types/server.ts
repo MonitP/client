@@ -7,7 +7,9 @@ export interface ProcessStatus {
 export interface ServerStatus {
   id: string;
   name: string;
-  status: 'connected' | 'disconnected';
+  ip: string;
+  port: number;
+  status: 'connected' | 'disconnected' | 'error';
   cpu: number;
   memory: number;
   disk: number;
@@ -15,7 +17,8 @@ export interface ServerStatus {
   lastUpdate: Date;
   cpuHistory: number[];
   memoryHistory: number[];
-  ip: string;
+  lastChecked?: string;
+  error?: string;
 }
 
 export interface Server {

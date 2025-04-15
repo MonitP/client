@@ -96,9 +96,21 @@ export const STRINGS = {
         }
       },
       submit: '서버 추가',
-      success: '서버가 추가되었습니다.'
+      success: '서버가 추가되었습니다.',
     }
-  }
+  },
+  dialog: {
+    confirm: '확인',
+    cancel: '취소',
+  },
+  list: {
+    edit: '수정',
+    delete: '삭제',
+    confirmDelete: '정말로 삭제하시겠습니까?',
+    serverEdit: '서버 수정',
+    editSuccess: '서버가 수정되었습니다.',
+    deleteSuccess: '서버가 삭제되었습니다.'
+  },
 } as const;
 
 type NestedKeyOf<T> = T extends object
