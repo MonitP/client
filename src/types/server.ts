@@ -38,11 +38,3 @@ export interface AddServerRequest {
   ip: string;
   port: string;
 }
-
-export interface AddServerResponse {
-  id: string;
-  name: string;
-  code: string;
-  ip: string;
-  port: string;
-} 

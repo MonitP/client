@@ -99,6 +99,14 @@ class SocketService {
       this.eventHandlers.delete(event);
     }
   }
+
+  onNotification(callback: () => void) {
+    this.on('notifications', callback);
+  }
+  
+  offNotification(callback: () => void) {
+    this.off('notifications', callback);
+  }
 }
 
 export const socketService = SocketService.getInstance(); 

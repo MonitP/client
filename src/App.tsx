@@ -18,8 +18,8 @@ const SIDEBAR_ICONS = [
 
 function Sidebar() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
-  const { notifications } = useNotifications();
-  const hasUnreadNotifications = notifications.some(notification => !notification.isRead);
+  const { notifications, isNew } = useNotifications();
+  const hasUnreadNotifications = notifications.some(notification => !notification.read);
 
   const CurrentPage = selectedIndex !== null ? SIDEBAR_ICONS[selectedIndex].component : null;
 
@@ -39,7 +39,7 @@ function Sidebar() {
               }`}
             >
               <img 
-                src={index === 4 && hasUnreadNotifications ? IMAGES.notificationEnabled : item.icon} 
+                src={index === 4 && isNew ? IMAGES.notificationEnabled : item.icon} 
                 alt={`icon-${index}`} 
                 className="w-6 h-6" 
               />

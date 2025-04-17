@@ -1,4 +1,5 @@
 import { API_URLS } from '../consts/api_urls';
+import { Notifications } from '../types/notification';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
@@ -68,3 +69,7 @@ export const serverApi = {
   delete: (id: string) => api.delete(`${API_URLS.servers.base}/${id}`),
   update: (id: string, data: unknown) => api.put(`${API_URLS.servers.base}/${id}`, data),
 }; 
+
+export const notificationApi = {
+  getAllNotifications: () => api.get<Notifications[]>(`${API_URLS.notification.base}`),
+};
