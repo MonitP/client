@@ -28,7 +28,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setNotificationsState(data);
   }, []);
 
-  const notificationRead = useCallback((id: number) => {
+  const notificationRead = useCallback(async (id: number) => {
+    await notificationApi.readNotification(id);
+
     setNotificationsState(prev => {
       const updated = prev.map(n => (n.id === id ? { ...n, read: true } : n));
       const hasUnread = updated.some(n => !n.read);
@@ -38,7 +40,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
   }, [setIsNew]);
   
-  const notificationAllRead = useCallback(() => {
+  const notificationAllRead = useCallback(async () => {
+    await notificationApi.readAllNotification();
+
     setNotificationsState(prev => {
       const updated = prev.map(n => ({ ...n, read: true }));
       setIsNew(false);
@@ -67,11 +71,13 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const hasUnread = data.some(n => !n.read);
         setIsNew(hasUnread);
       } catch (err) {
+        console.error('알림 데이터를 불러오는 데 실패했습니다.', err);
       }
     };
   
     fetchNotificationsOnce();
   }, []);
+  
 
   return (
     <NotificationContext.Provider

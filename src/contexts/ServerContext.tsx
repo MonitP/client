@@ -22,16 +22,14 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const refreshServers = async () => {
     try {
-      const data = await serverApi.getAllData() as ServerStatus[];
+      const data = await serverApi.getAllData();
       const updatedData = data.map(server => ({
         ...server,
         status: server.status || 'disconnected',
       }));
       setServers(updatedData);
-      data.forEach((server, i) => {
-        console.log(`Server ${i} - CPU History Length: ${server.cpuHistory.length}, RAM History: ${server.ramHistory}`);
-      });
     } catch (error) {
+      console.error('서버 데이터 불러오기 실패', error);
     }
   };
 
