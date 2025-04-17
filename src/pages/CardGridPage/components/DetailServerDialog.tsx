@@ -120,17 +120,17 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
                 <div className="w-24 h-24 mb-2">
                   <CircularProgressbar
-                    value={server.memory ? (server.memory / 1024) * 10 : 0}
-                    text={`${server.memory ? (server.memory / 1024).toFixed(1) : 0}GB`}
+                    value={server.ram || 0}
+                    text={`${server.ram || 0}%`}                    
                     styles={buildStyles({
-                      pathColor: getProgressColor(server.memory ? (server.memory / 1024) * 10 : 0),
+                      pathColor: getProgressColor(server.ram ? (server.ram / 1024) * 10 : 0),
                       textColor: '#374151',
                       textSize: '24px',
                       trailColor: '#E5E7EB',
                     })}
                   />
                 </div>
-                <div className="text-sm text-gray-500">{getString('server.resources.memory')}</div>
+                <div className="text-sm text-gray-500">{getString('server.resources.ram')}</div>
               </div>
 
               {/* Disk 사용량 */}
@@ -138,7 +138,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                 <div className="w-24 h-24 mb-2">
                   <CircularProgressbar
                     value={server.disk || 0}
-                    text={`${server.disk || 0}%`}
+                    text={`${server.disk || 0}%`}                    
                     styles={buildStyles({
                       pathColor: getProgressColor(server.disk || 0),
                       textColor: '#374151',
@@ -186,13 +186,13 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                       tension: 0.4,
                     },
                     {
-                      label: getString('server.detail.history.memory'),
-                      data: (server.memoryHistory || Array(24).fill(0)).map(v => Number((v / 16384 * 100).toFixed(1))),
+                      label: getString('server.detail.history.ram'),
+                      data: server.ramHistory || Array(24).fill(0),
                       borderColor: '#3B82F6',
                       backgroundColor: 'rgba(59, 130, 246, 0.1)',
                       tension: 0.4,
                     },
-                  ],
+                  ],                  
                 }}
                 options={{
                   responsive: true,

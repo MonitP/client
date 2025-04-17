@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
     connected: servers.filter(s => s.status === 'connected').length,
     disconnected: servers.filter(s => s.status === 'disconnected').length,
     avgCpu: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.cpu || 0), 0) / servers.length : 0,
-    avgMemory: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.memory || 0), 0) / servers.length : 0,
+    avgRAM: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.ram || 0), 0) / servers.length : 0,
     totalProcesses: servers.length > 0
     ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
     : 0,
@@ -24,7 +24,6 @@ const HomePage: React.FC = () => {
         0
       )
     : 0,
-  
   };
 
   return (
@@ -59,14 +58,14 @@ const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="flex items-center space-x-6">
               <div className="w-32">
-                <CircularProgressbar
-                  value={stats.avgCpu}
-                  text={`${stats.avgCpu.toFixed(1)}%`}
-                  styles={buildStyles({
-                    pathColor: stats.avgCpu > 80 ? '#EF4444' : '#10B981',
-                    textColor: '#374151',
-                  })}
-                />
+              <CircularProgressbar
+                value={stats.avgCpu}
+                text={`${stats.avgCpu.toFixed(1)}%`}
+                styles={buildStyles({
+                  pathColor: stats.avgCpu > 80 ? '#EF4444' : '#10B981',
+                  textColor: '#374151',
+                })}
+              />
               </div>
               <div>
                 <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgCpu.title')}</h4>
@@ -75,18 +74,18 @@ const HomePage: React.FC = () => {
             </div>
             <div className="flex items-center space-x-6">
               <div className="w-32">
-                <CircularProgressbar
-                  value={(stats.avgMemory / 1024) * 10}
-                  text={`${(stats.avgMemory / 1024).toFixed(1)}GB`}
-                  styles={buildStyles({
-                    pathColor: (stats.avgMemory / 1024) > 8 ? '#EF4444' : '#10B981',
-                    textColor: '#374151',
-                  })}
-                />
+              <CircularProgressbar
+                value={stats.avgRAM}
+                text={`${stats.avgRAM.toFixed(1)}%`}
+                styles={buildStyles({
+                  pathColor: stats.avgRAM > 80 ? '#EF4444' : '#10B981',
+                  textColor: '#374151',
+                })}
+              />
               </div>
               <div>
-                <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgMemory.title')}</h4>
-                <p className="text-sm text-gray-500">{getString('home.resources.avgMemory.description')}</p>
+                <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgRAM.title')}</h4>
+                <p className="text-sm text-gray-500">{getString('home.resources.avgRAM.description')}</p>
               </div>
             </div>
           </div>
@@ -97,7 +96,7 @@ const HomePage: React.FC = () => {
           <h3 className="text-xl font-semibold text-gray-800 mb-6">{getString('home.issues.title')}</h3>
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
             {servers
-              .filter(server => server.status === 'disconnected' || server.cpu > 80 || server.memory > 8192)
+              .filter(server => server.status === 'disconnected' || server.cpu > 80 || server.ram > 8192)
               .map(server => (
                 <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
@@ -107,10 +106,10 @@ const HomePage: React.FC = () => {
                     </div>
                     <div className="flex space-x-4">
                       <p className="text-sm text-gray-500 whitespace-nowrap">
-                        {getString('home.issues.stats.cpu')}: {server.cpu || 0}%
+                        {getString('home.issues.stats.cpu')} : {server.cpu || 0}%
                       </p>
                       <p className="text-sm text-gray-500 whitespace-nowrap">
-                        {getString('home.issues.stats.memory')}: {server.memory ? (server.memory / 1024).toFixed(1) : 0}GB
+                        {getString('home.issues.stats.ram')} : {server.ram || 0}%
                       </p>
                     </div>
                   </div>
@@ -119,7 +118,7 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
               ))}
-              {servers.filter(server => server.status === 'disconnected' || server.cpu > 80 || server.memory > 8192).length === 0 && (
+              {servers.filter(server => server.status === 'disconnected' || server.cpu > 80 || server.ram > 8192).length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   {getString('home.issues.noIssues')}
                 </div>
@@ -133,7 +132,7 @@ const HomePage: React.FC = () => {
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
             {servers
               .filter(server => server.status === 'connected' && 
-                ((server.cpu > 60 && server.cpu <= 80) || (server.memory > 6144 && server.memory <= 8192)))
+                ((server.cpu > 60 && server.cpu <= 80) || (server.ram > 6144 && server.ram <= 8192)))
               .map(server => (
                 <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
@@ -143,10 +142,10 @@ const HomePage: React.FC = () => {
                     </div>
                     <div className="flex space-x-4">
                       <p className="text-sm text-gray-500 whitespace-nowrap">
-                        {getString('home.issues.stats.cpu')}: {server.cpu}%
+                        {getString('home.issues.stats.cpu')} : {server.cpu}%
                       </p>
                       <p className="text-sm text-gray-500 whitespace-nowrap">
-                        {getString('home.issues.stats.memory')}: {(server.memory / 1024).toFixed(1)}GB
+                      {getString('home.issues.stats.ram')} : {server.ram || 0}%
                       </p>
                     </div>
                   </div>
@@ -156,7 +155,7 @@ const HomePage: React.FC = () => {
                 </div>
               ))}
               {servers.filter(server => server.status === 'connected' && 
-                ((server.cpu > 60 && server.cpu <= 80) || (server.memory > 6144 && server.memory <= 8192))).length === 0 && (
+                ((server.cpu > 60 && server.cpu <= 80) || (server.ram > 6144 && server.ram <= 8192))).length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   {getString('home.warnings.noWarnings')}
                 </div>

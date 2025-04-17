@@ -1,6 +1,6 @@
 export interface Notification {
   id: string;
-  type: 'cpu' | 'memory' | 'connection';
+  type: 'cpu' | 'ram' | 'connection';
   serverId: string;
   serverName: string;
   message: string;

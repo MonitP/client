@@ -13,7 +13,7 @@ export const STRINGS = {
     },
     resources: {
       cpu: 'CPU',
-      memory: '메모리',
+      ram: 'RAM',
       disk: '디스크',
     },
     detail: {
@@ -24,14 +24,14 @@ export const STRINGS = {
       history: {
         title: '리소스 사용량 추이',
         cpu: 'CPU 사용률',
-        memory: '메모리 사용률'
+        ram: 'RAM 사용률'
       }
     },
   },
   notification: {
     types: {
       cpu: 'CPU 사용량',
-      memory: '메모리 사용량',
+      ram: 'RAM 사용량',
       connection: '연결 상태',
       default: '일반'
     },
@@ -59,8 +59,8 @@ export const STRINGS = {
         title: '평균 CPU 사용률',
         description: '전체 서버 평균'
       },
-      avgMemory: {
-        title: '평균 메모리 사용량',
+      avgRAM: {
+        title: '평균 RAM 사용량',
         description: '전체 서버 평균'
       }
     },
@@ -68,7 +68,7 @@ export const STRINGS = {
       title: '문제 발생 서버',
       stats: {
         cpu: 'CPU',
-        memory: '메모리'
+        ram: 'RAM'
       },
       noIssues: '문제가 발생한 서버가 없습니다.',
       noServers: '등록한 서버가 없습니다.',

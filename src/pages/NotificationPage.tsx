@@ -22,7 +22,7 @@ const NotificationPage: React.FC = () => {
     switch (type) {
       case 'cpu':
         return 'text-red-500';
-      case 'memory':
+      case 'ram':
         return 'text-blue-500';
       case 'connection':
         return 'text-gray-500';

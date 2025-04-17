@@ -1,37 +1,76 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getString } from '../consts/strings';
 import detail from '../assets/images/detail.svg';
 import { ServerStatus } from '../types/server';
 import DetailServerDialog from './CardGridPage/components/DetailServerDialog';
 import { useServers } from '../contexts/ServerContext';
+import { socketService } from '../services/socket';
 
 const CardGridPage: React.FC = () => {
-  const { servers } = useServers();
-  const [selectedServer, setSelectedServer] = useState<ServerStatus | null>(null);
+  const { servers, setServers } = useServers();
+  const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
+
+  const selectedServer = servers.find((s) => s.id.toString() === selectedServerId);
+
+  useEffect(() => {
+    socketService.onServerStats((updatedServers) => {
+      setServers(prevServers => {
+        const updatedMap = new Map(updatedServers.map(s => [s.code, s]));
+
+        return prevServers.map(server => {
+          const updated = updatedMap.get(server.code);
+          if (updated) {
+            return {
+              ...server,
+              ...updated,
+              cpuHistory: server.cpuHistory,
+              ramHistory: server.ramHistory,
+              status: updated.status as 'connected' | 'disconnected' | 'warning',
+            };
+          }
+
+          return {
+            ...server,
+            status: 'disconnected' as const,
+            processes: server.processes.map(p => ({
+              ...p,
+              status: 'stopped' as const,
+            })),
+          };
+        });
+      });
+    });
+
+    return () => {
+      socketService.offServerStats(() => {});
+    };
+  }, [setServers]);
 
   const onDetailClick = (server: ServerStatus, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedServer(server);
-    console.log('서버 상세 정보 열기:', server.status);
+    setSelectedServerId(server.id.toString());
+    console.log('서버 상세 정보 열기:', server.cpuHistory, '   ', server.ramHistory);
   };
 
   const closeDialog = () => {
-    setSelectedServer(null);
+    setSelectedServerId(null);
     console.log('서버 상세 정보 닫기');
   };
 
   return (
-    <>
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">{getString('serverCard.title')}</h2>
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+    <div className="w-full px-6">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        {getString('serverCard.title')}
+      </h2>
+
+      <div className="max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {servers.map((server) => (
-          <div 
-            key={server.id} 
+          <div
+            key={server.id}
             className="bg-white rounded-lg shadow-sm border border-gray-100 relative group hover:shadow-md transition-shadow duration-200"
           >
-            {/* 호버 시 상세보기 아이콘 */}
             <div className="absolute inset-0 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-              <div 
+              <div
                 className="w-10 h-8 bg-white rounded-md flex items-center justify-center cursor-pointer"
                 onClick={(e) => onDetailClick(server, e)}
               >
@@ -39,7 +78,6 @@ const CardGridPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 서버 헤더 */}
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800">{server.name}</h3>
@@ -52,7 +90,6 @@ const CardGridPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 서버 리소스 사용량 */}
             <div className="px-4 pb-4">
               <div className="flex items-center space-x-4 text-sm">
                 <div className="flex items-center space-x-2">
@@ -61,16 +98,14 @@ const CardGridPage: React.FC = () => {
                 </div>
                 <div className="w-px h-4 bg-gray-200" />
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-500">{getString('server.resources.memory')}</span>
-                  <span className="font-medium text-gray-700">{server.memory ? (server.memory / 1024).toFixed(1) : 0}GB</span>
+                  <span className="text-gray-500">{getString('server.resources.ram')}</span>
+                  <span className="font-medium text-gray-700">{server.ram || 0}%</span>
                 </div>
               </div>
             </div>
 
-            {/* 구분선 */}
             <div className="border-t border-gray-100" />
 
-            {/* 프로세스 목록 */}
             <div className="p-4 space-y-3">
               {server.processes.map((process) => (
                 <div key={process.id} className="flex items-center justify-between">
@@ -88,14 +123,13 @@ const CardGridPage: React.FC = () => {
         ))}
       </div>
 
-      {/* 상세 정보 다이얼로그 */}
       {selectedServer && (
         <DetailServerDialog 
           server={selectedServer}
           onClose={closeDialog}
         />
       )}
-    </>
+    </div>
   );
 };
 

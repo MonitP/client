@@ -28,6 +28,9 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         status: server.status || 'disconnected',
       }));
       setServers(updatedData);
+      data.forEach((server, i) => {
+        console.log(`Server ${i} - CPU History Length: ${server.cpuHistory.length}, RAM History: ${server.ramHistory}`);
+      });
     } catch (error) {
     }
   };
@@ -38,23 +41,35 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     socketService.connect();
     
     socketService.onServerStats((updatedServers: ServerStatus[]) => {
-
       setServers(prevServers => {
-        const updated = prevServers.map(server => {
-          const updatedServer = updatedServers.find(s => s.code === server.code);
-
-          return updatedServer ? {
+        const updatedMap = new Map(updatedServers.map(s => [s.code, s]));
+    
+        const mergedServers = prevServers.map(server => {
+          const updated = updatedMap.get(server.code);
+          if (updated) {
+            return {
+              ...server,
+              ...updated,
+              cpuHistory: server.cpuHistory,
+              ramHistory: server.ramHistory,
+              status: updated.status as 'connected' | 'disconnected' | 'warning',
+            };
+          }
+    
+          return {
             ...server,
-            ...updatedServer,
-            status: updatedServer.status || 'disconnected',
-          } : server;
+            status: 'disconnected' as const,
+            processes: server.processes.map(p => ({
+              ...p,
+              status: 'stopped' as const,
+            })),
+          };
         });
-
-        return updated;
+    
+        return mergedServers;
       });
     });
-
-    // 컴포넌트 언마운트 시 정리
+    
     return () => {
       socketService.offServerStats(() => {});
       socketService.disconnect();

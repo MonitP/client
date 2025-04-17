@@ -10,14 +10,15 @@ export interface ServerStatus {
   code: string;
   ip: string;
   port: number;
-  status: 'connected' | 'disconnected' | 'error';
+  status: 'connected' | 'disconnected' | 'warning';
   cpu: number;
-  memory: number;
+  ram: number;
   disk: number;
+  gpu: number;
   processes: ProcessStatus[];
   lastUpdate: Date;
   cpuHistory: number[];
-  memoryHistory: number[];
+  ramHistory: number[];
   lastChecked?: string;
   error?: string;
 }
