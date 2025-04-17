@@ -51,12 +51,20 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [setIsNew]);
   
   useEffect(() => {
-    const handleNewNotification = () => {
-      setIsNew(true);
+    const handleNewNotification = async () => {
+      try {
+        const data = await notificationApi.getAllNotifications();
+        setNotificationsState(data);
+  
+        const hasUnread = data.some(n => !n.read);
+        setIsNew(hasUnread);
+      } catch (err) {
+        console.error('알림 소켓 처리 중 오류 발생', err);
+      }
     };
-
+  
     socketService.on('notifications', handleNewNotification);
-
+  
     return () => {
       socketService.off('notifications', handleNewNotification);
     };
