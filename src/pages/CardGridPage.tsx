@@ -63,7 +63,7 @@ const CardGridPage: React.FC = () => {
         {getString('serverCard.title')}
       </h2>
 
-      <div className="max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="max-w-[1500px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {servers.map((server) => (
           <div
             key={server.id}
@@ -91,15 +91,22 @@ const CardGridPage: React.FC = () => {
             </div>
 
             <div className="px-4 pb-4">
-              <div className="flex items-center space-x-4 text-sm">
-                <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                <div className="flex items-center space-x-1">
                   <span className="text-gray-500">{getString('server.resources.cpu')}</span>
-                  <span className="font-medium text-gray-700">{server.cpu || 0}%</span>
+                  <span className="font-medium text-gray-600">{server.cpu || 0}%</span>
                 </div>
-                <div className="w-px h-4 bg-gray-200" />
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
                   <span className="text-gray-500">{getString('server.resources.ram')}</span>
-                  <span className="font-medium text-gray-700">{server.ram || 0}%</span>
+                  <span className="font-medium text-gray-600">{server.ram || 0}%</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-500">{getString('server.resources.disk')}</span>
+                  <span className="font-medium text-gray-600">{server.disk || 0}%</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-500">{getString('server.resources.gpu')}</span>
+                  <span className="font-medium text-gray-600">{server.gpu || 0}%</span>
                 </div>
               </div>
             </div>

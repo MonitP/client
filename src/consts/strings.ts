@@ -15,6 +15,7 @@ export const STRINGS = {
       cpu: 'CPU',
       ram: 'RAM',
       disk: '디스크',
+      gpu: 'GPU',
     },
     detail: {
       title: '서버 상세 정보',
@@ -61,6 +62,10 @@ export const STRINGS = {
       },
       avgRAM: {
         title: '평균 RAM 사용량',
+        description: '전체 서버 평균'
+      },
+      avgGpu: {
+        title: '평균 GPU 사용량',
         description: '전체 서버 평균'
       }
     },

@@ -15,6 +15,7 @@ const HomePage: React.FC = () => {
     disconnected: servers.filter(s => s.status === 'disconnected').length,
     avgCpu: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.cpu || 0), 0) / servers.length : 0,
     avgRAM: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.ram || 0), 0) / servers.length : 0,
+    avgGpu: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.gpu || 0), 0) / servers.length : 0,
     totalProcesses: servers.length > 0
     ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
     : 0,
@@ -55,41 +56,64 @@ const HomePage: React.FC = () => {
         {/* 리소스 사용량 */}
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-6">{getString('home.resources.title')}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="flex items-center space-x-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            {/* CPU */}
+            <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-32">
-              <CircularProgressbar
-                value={stats.avgCpu}
-                text={`${stats.avgCpu.toFixed(1)}%`}
-                styles={buildStyles({
-                  pathColor: stats.avgCpu > 80 ? '#EF4444' : '#10B981',
-                  textColor: '#374151',
-                })}
-              />
+                <CircularProgressbar
+                  value={stats.avgCpu}
+                  text={`${stats.avgCpu.toFixed(1)}%`}
+                  styles={buildStyles({
+                    pathColor: stats.avgCpu > 80 ? '#EF4444' : '#10B981',
+                    textColor: '#374151',
+                  })}
+                />
               </div>
               <div>
                 <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgCpu.title')}</h4>
                 <p className="text-sm text-gray-500">{getString('home.resources.avgCpu.description')}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-6">
+
+            {/* RAM */}
+            <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-32">
-              <CircularProgressbar
-                value={stats.avgRAM}
-                text={`${stats.avgRAM.toFixed(1)}%`}
-                styles={buildStyles({
-                  pathColor: stats.avgRAM > 80 ? '#EF4444' : '#10B981',
-                  textColor: '#374151',
-                })}
-              />
+                <CircularProgressbar
+                  value={stats.avgRAM}
+                  text={`${stats.avgRAM.toFixed(1)}%`}
+                  styles={buildStyles({
+                    pathColor: stats.avgRAM > 80 ? '#EF4444' : '#10B981',
+                    textColor: '#374151',
+                  })}
+                />
               </div>
               <div>
                 <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgRAM.title')}</h4>
                 <p className="text-sm text-gray-500">{getString('home.resources.avgRAM.description')}</p>
               </div>
             </div>
+
+            {/* GPU */}
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-32">
+                <CircularProgressbar
+                  value={stats.avgGpu}
+                  text={`${stats.avgGpu.toFixed(1)}%`}
+                  styles={buildStyles({
+                    pathColor: stats.avgGpu > 80 ? '#EF4444' : '#10B981',
+                    textColor: '#374151',
+                  })}
+                />
+              </div>
+              <div>
+              <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgGpu.title')}</h4>
+              <p className="text-sm text-gray-500">{getString('home.resources.avgGpu.description')}</p>
+              </div>
+            </div>
           </div>
         </div>
+
 
         {/* 최근 문제 발생 서버 */}
         <div className="bg-white rounded-lg shadow p-6">

@@ -98,17 +98,17 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
           {/* 리소스 사용량 */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.resources')}</h3>
-            <div className="grid grid-cols-3 gap-4">
-              {/* CPU 사용량 */}
-              <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-24 h-24 mb-2">
+            <div className="grid grid-cols-4 gap-4">
+              {/* CPU */}
+              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
+                <div className="w-20 h-20 mb-2">
                   <CircularProgressbar
                     value={server.cpu || 0}
                     text={`${server.cpu || 0}%`}
                     styles={buildStyles({
                       pathColor: getProgressColor(server.cpu || 0),
                       textColor: '#374151',
-                      textSize: '24px',
+                      textSize: '20px',
                       trailColor: '#E5E7EB',
                     })}
                   />
@@ -116,16 +116,16 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                 <div className="text-sm text-gray-500">{getString('server.resources.cpu')}</div>
               </div>
 
-              {/* RAM 사용량 */}
-              <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-24 h-24 mb-2">
+              {/* RAM */}
+              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
+                <div className="w-20 h-20 mb-2">
                   <CircularProgressbar
                     value={server.ram || 0}
                     text={`${server.ram || 0}%`}                    
                     styles={buildStyles({
                       pathColor: getProgressColor(server.ram ? (server.ram / 1024) * 10 : 0),
                       textColor: '#374151',
-                      textSize: '24px',
+                      textSize: '20px',
                       trailColor: '#E5E7EB',
                     })}
                   />
@@ -133,21 +133,38 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                 <div className="text-sm text-gray-500">{getString('server.resources.ram')}</div>
               </div>
 
-              {/* Disk 사용량 */}
-              <div className="p-4 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-24 h-24 mb-2">
+              {/* Disk */}
+              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
+                <div className="w-20 h-20 mb-2">
                   <CircularProgressbar
                     value={server.disk || 0}
                     text={`${server.disk || 0}%`}                    
                     styles={buildStyles({
                       pathColor: getProgressColor(server.disk || 0),
                       textColor: '#374151',
-                      textSize: '24px',
+                      textSize: '20px',
                       trailColor: '#E5E7EB',
                     })}
                   />
                 </div>
                 <div className="text-sm text-gray-500">{getString('server.resources.disk')}</div>
+              </div>
+
+              {/* GPU */}
+              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
+                <div className="w-20 h-20 mb-2">
+                  <CircularProgressbar
+                    value={server.gpu || 0}
+                    text={`${server.gpu || 0}%`}                    
+                    styles={buildStyles({
+                      pathColor: getProgressColor(server.gpu || 0),
+                      textColor: '#374151',
+                      textSize: '20px',
+                      trailColor: '#E5E7EB',
+                    })}
+                  />
+                </div>
+                <div className="text-sm text-gray-500">{getString('server.resources.gpu')}</div>
               </div>
             </div>
           </div>
