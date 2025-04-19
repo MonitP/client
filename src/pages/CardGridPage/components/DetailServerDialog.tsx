@@ -49,6 +49,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
 
   useEffect(() => {
     console.log('DetailServerDialog 마운트됨:', server);
+    console.log('프로세스 정보:', server.processes);
   }, [server]);
 
   const getProgressColor = (value: number) => {
@@ -173,11 +174,14 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.processes')}</h3>
             <div className="space-y-3">
-              {server.processes.map((process) => (
-                <div key={process.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              {server.processes.map((process, index) => (
+                <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className={`w-2 h-2 rounded-full ${process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
-                    <span className="text-gray-700">{process.name}</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-700">{process.name}</span>
+                      <span className="text-xs text-gray-500">{process.version || '버전 없음'}</span>
+                    </div>
                   </div>
                   <span className="text-sm text-gray-500">
                     {getString(`server.process.${process.status}`)}

@@ -10,12 +10,14 @@ interface ServerContextType {
   refreshServers: () => Promise<void>;
 }
 
-const ServerContext = createContext<ServerContextType>({ 
-  servers: [], 
-  setServers: () => {}, 
+const defaultContextValue: ServerContextType = {
+  servers: [],
+  setServers: () => {},
   addServer: () => {},
   refreshServers: async () => {}
-});
+};
+
+const ServerContext = createContext<ServerContextType>(defaultContextValue);
 
 export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [servers, setServers] = useState<ServerStatus[]>([]);
@@ -23,15 +25,22 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const refreshServers = async () => {
     try {
       const data = await serverApi.getAllData();
-      console.log('API Response:', data);
+      if (!Array.isArray(data)) {
+        console.error('Invalid server data received:', data);
+        setServers([]);
+        return;
+      }
       const updatedData = data.map(server => ({
         ...server,
         status: server.status || 'disconnected',
+        cpuHistory: server.cpuHistory || [],
+        ramHistory: server.ramHistory || [],
+        processes: server.processes || []
       }));
-      console.log('Updated Servers:', updatedData);
       setServers(updatedData);
     } catch (error) {
       console.error('서버 데이터 불러오기 실패', error);
+      setServers([]);
     }
   };
 
@@ -40,18 +49,24 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     socketService.connect();
     
-    socketService.onServerStats((updatedServers: ServerStatus[]) => {
+    socketService.onServerStats((updatedServers) => {
+      if (!Array.isArray(updatedServers)) {
+        console.error('Invalid server data received:', updatedServers);
+        return;
+      }
+
       setServers(prevServers => {
         const updatedMap = new Map(updatedServers.map(s => [s.code, s]));
     
-        const mergedServers = prevServers.map(server => {
+        return prevServers.map(server => {
           const updated = updatedMap.get(server.code);
           if (updated) {
             return {
               ...server,
               ...updated,
-              cpuHistory: server.cpuHistory,
-              ramHistory: server.ramHistory,
+              cpuHistory: server.cpuHistory || [],
+              ramHistory: server.ramHistory || [],
+              processes: server.processes || [],
               status: updated.status as 'connected' | 'disconnected' | 'warning',
             };
           }
@@ -59,14 +74,12 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           return {
             ...server,
             status: 'disconnected' as const,
-            processes: server.processes.map(p => ({
+            processes: (server.processes || []).map(p => ({
               ...p,
               status: 'stopped' as const,
             })),
           };
         });
-    
-        return mergedServers;
       });
     });
     
@@ -80,6 +93,9 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const serverWithStatus = {
       ...newServer,
       status: newServer.status || 'disconnected',
+      cpuHistory: newServer.cpuHistory || [],
+      ramHistory: newServer.ramHistory || [],
+      processes: newServer.processes || []
     };
     setServers(prevServers => [...prevServers, serverWithStatus]);
   };
@@ -91,4 +107,10 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   );
 };
 
-export const useServers = () => useContext(ServerContext);
+export const useServers = () => {
+  const context = useContext(ServerContext);
+  if (!context) {
+    throw new Error('useServers must be used within a ServerProvider');
+  }
+  return context;
+};

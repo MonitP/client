@@ -1,6 +1,7 @@
 export interface ProcessStatus {
   id: string;
   name: string;
+  version: string;
   status: 'running' | 'stopped';
 }
 

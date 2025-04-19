@@ -7,7 +7,7 @@ import { useServers } from '../contexts/ServerContext';
 import { socketService } from '../services/socket';
 
 const CardGridPage: React.FC = () => {
-  const { servers, setServers } = useServers();
+  const { servers = [], setServers } = useServers();
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
 
   const selectedServer = servers.find((s) => s.id.toString() === selectedServerId);
@@ -25,6 +25,7 @@ const CardGridPage: React.FC = () => {
               ...updated,
               cpuHistory: server.cpuHistory,
               ramHistory: server.ramHistory,
+              processes: updated.processes || server.processes,
               status: updated.status as 'connected' | 'disconnected' | 'warning',
             };
           }
@@ -63,7 +64,7 @@ const CardGridPage: React.FC = () => {
         {getString('serverCard.title')}
       </h2>
 
-      <div className="max-w-[1500px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="w-full max-w-[95vw] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {servers.map((server) => (
           <div
             key={server.id}
@@ -114,8 +115,8 @@ const CardGridPage: React.FC = () => {
             <div className="border-t border-gray-100" />
 
             <div className="p-4 space-y-3">
-              {server.processes.map((process) => (
-                <div key={process.id} className="flex items-center justify-between">
+              {server.processes.map((process, index) => (
+                <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className={`w-2 h-2 rounded-full ${process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
                     <span className="text-sm text-gray-700">{process.name}</span>
