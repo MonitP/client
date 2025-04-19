@@ -108,10 +108,10 @@ class SocketService {
     this.off('notifications', callback);
   }
 
-  sendCommand(serverId: string, command: string) {
+  sendCommand(serverCode: string, command: string) {
     if (this.socket?.connected) {
       this.socket.emit('command', { 
-        serverId, 
+        serverCode, 
         command,
         timestamp: new Date().toISOString()
       });

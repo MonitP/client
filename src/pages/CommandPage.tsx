@@ -6,7 +6,7 @@ import Toast from '../components/Toast';
 import { socketService } from '../services/socket';
 
 interface CommandResult {
-  serverId: string;
+  serverCode: string;
   serverName: string;
   command: string;
   result: string;
@@ -22,12 +22,11 @@ const CommandPage: React.FC = () => {
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
 
   useEffect(() => {
-    const handler = (data: { serverId: string; result: string; command: string }) => {
-      const server = servers.find(s => s.code === data.serverId);
-      console.log('command_show : ', server);
+    const handler = (data: { serverCode: string; result: string; command: string }) => {
+      const server = servers.find(s => s.code === data.serverCode);
       if (server) {
         setCommandHistory(prev => [{
-          serverId: server.code,
+          serverCode: server.code,
           serverName: server.name,
           command: data.command,
           result: data.result,
@@ -37,14 +36,13 @@ const CommandPage: React.FC = () => {
       setIsExecuting(false);
     };
 
-    // 기존 리스너 제거 후 새로 등록
     socketService.off('command_show', handler);
     socketService.on('command_show', handler);
 
     return () => {
       socketService.off('command_show', handler);
     };
-  }, []); // 의존성 배열에서 servers 제거
+  }, [servers]);
   
 
   const handleCommandSubmit = async () => {
@@ -58,6 +56,8 @@ const CommandPage: React.FC = () => {
       setToastMessage({ text: getString('command.error.serverNotFound'), id: Date.now() });
       return;
     }
+
+    console.log('command_send : ', selectedServer, command.trim());
 
     setIsExecuting(true);
     socketService.sendCommand(selectedServer, command.trim());
