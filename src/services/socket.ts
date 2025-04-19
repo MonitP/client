@@ -107,6 +107,16 @@ class SocketService {
   offNotification(callback: () => void) {
     this.off('notifications', callback);
   }
+
+  sendCommand(serverId: string, command: string) {
+    if (this.socket?.connected) {
+      this.socket.emit('command', { 
+        serverId, 
+        command,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
 }
 
 export const socketService = SocketService.getInstance(); 

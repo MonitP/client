@@ -41,7 +41,7 @@ export const serverApi = {
   add: (data: unknown) => api.post(`${API_URLS.servers.base}${API_URLS.servers.create}`, data),
   getAllData: async (): Promise<ServerStatus[]> => {
     const res = await api.get<{ statusCode: number; message: string; data: ServerStatus[] }>(
-      `${API_URLS.servers.base}${API_URLS.servers.base}`
+      `${API_URLS.servers.base}`
     );
     return res.data;
   },

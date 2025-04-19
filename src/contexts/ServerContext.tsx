@@ -23,10 +23,12 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const refreshServers = async () => {
     try {
       const data = await serverApi.getAllData();
+      console.log('API Response:', data);
       const updatedData = data.map(server => ({
         ...server,
         status: server.status || 'disconnected',
       }));
+      console.log('Updated Servers:', updatedData);
       setServers(updatedData);
     } catch (error) {
       console.error('서버 데이터 불러오기 실패', error);

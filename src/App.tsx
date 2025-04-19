@@ -7,6 +7,7 @@ import { ServerProvider } from './contexts/ServerContext';
 import { NotificationProvider, useNotifications } from './contexts/NotificationContext';
 import NotificationPage from './pages/NotificationPage';
 import AddPage from './pages/AddPage';
+import CommandPage from './pages/CommandPage';
 
 const SIDEBAR_ICONS = [
   { icon: IMAGES.home, component: HomePage },
@@ -14,6 +15,7 @@ const SIDEBAR_ICONS = [
   { icon: IMAGES.add, component: AddPage },
   { icon: IMAGES.listView, component: ListViewPage },
   { icon: IMAGES.notification, component: NotificationPage },
+  { icon: IMAGES.command, component: CommandPage },
 ];
 
 function Sidebar() {

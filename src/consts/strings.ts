@@ -125,6 +125,20 @@ export const STRINGS = {
     editSuccess: '서버가 수정되었습니다.',
     deleteSuccess: '서버가 삭제되었습니다.'
   },
+  command: {
+    title: '명령어 실행',
+    selectServer: '서버 선택',
+    selectServerPlaceholder: '서버를 선택하세요',
+    commandInput: '명령어 입력',
+    commandPlaceholder: '실행할 명령어를 입력하세요',
+    execute: '실행',
+    history: '명령어 실행 기록',
+    noHistory: '실행된 명령어가 없습니다.',
+    error: {
+      empty: '서버와 명령어를 모두 입력해주세요.',
+      serverNotFound: '서버를 찾을 수 없습니다.'
+    }
+  },
 } as const;
 
 type NestedKeyOf<T> = T extends object
