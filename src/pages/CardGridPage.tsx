@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { getString } from '../consts/strings';
-import detail from '../assets/images/detail.svg';
+import { IMAGES } from '../consts/images';
 import { ServerStatus } from '../types/server';
 import DetailServerDialog from './CardGridPage/components/DetailServerDialog';
 import { useServers } from '../contexts/ServerContext';
 import { socketService } from '../services/socket';
+import { serverApi } from '../services/api';
+import Toast from '../components/Toast';
 
 const CardGridPage: React.FC = () => {
   const { servers = [], setServers } = useServers();
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<{ text: string; id: number } | null>(null);
 
   const selectedServer = servers.find((s) => s.id.toString() === selectedServerId);
 
@@ -58,8 +61,32 @@ const CardGridPage: React.FC = () => {
     console.log('서버 상세 정보 닫기');
   };
 
+  const deleteProcess = async (processName: string) => {
+    if (selectedServer) {
+      try {
+        await serverApi.deleteProcess(selectedServer.code, processName);
+        setServers(prevServers => 
+          prevServers.map(server => {
+            if (server.id === selectedServer.id) {
+              return {
+                ...server,
+                processes: server.processes.filter(p => p.name !== processName)
+              };
+            }
+            return server;
+          })  
+        );
+        setToastMessage({ text: '프로세스가 삭제되었습니다.', id: Date.now() });
+      } catch (error) {
+        console.error('프로세스 삭제 실패:', error);
+        setToastMessage({ text: '프로세스 삭제에 실패했습니다.', id: Date.now() });
+      }
+    }
+  };
+
   return (
     <div className="w-full px-6">
+      <Toast message={toastMessage} />
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">
         {getString('serverCard.title')}
       </h2>
@@ -75,7 +102,7 @@ const CardGridPage: React.FC = () => {
                 className="w-10 h-8 bg-white rounded-md flex items-center justify-center cursor-pointer"
                 onClick={(e) => onDetailClick(server, e)}
               >
-                <img src={detail} alt="상세보기" className="w-5 h-5" />
+                <img src={IMAGES.detail} alt="상세보기" className="w-5 h-5" />
               </div>
             </div>
 
@@ -115,17 +142,18 @@ const CardGridPage: React.FC = () => {
             <div className="border-t border-gray-100" />
 
             <div className="p-4 space-y-3">
-              {server.processes.map((process, index) => (
-                <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full ${process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
-                    <span className="text-sm text-gray-700">{process.name}</span>
+              {server.processes
+                .map((process, index) => (
+                  <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-2 h-2 rounded-full ${process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
+                      <span className="text-sm text-gray-700">{process.name}</span>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      {getString(`server.process.${process.status}`)}
+                    </span>
                   </div>
-                  <span className="text-xs text-gray-500">
-                    {getString(`server.process.${process.status}`)}
-                  </span>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         ))}
@@ -135,6 +163,7 @@ const CardGridPage: React.FC = () => {
         <DetailServerDialog 
           server={selectedServer}
           onClose={closeDialog}
+          onDeleteProcess={deleteProcess}
         />
       )}
     </div>

@@ -24,7 +24,7 @@ class SocketService {
     }
 
     this.isConnecting = true;
-    this.socket = io('http://localhost:8000', {
+    this.socket = io('http://localhost:14001', {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

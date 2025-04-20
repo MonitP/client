@@ -15,6 +15,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { IMAGES } from '../../../consts/images';
 
 ChartJS.register(
   CategoryScale,
@@ -29,9 +30,10 @@ ChartJS.register(
 interface DetailServerDialogProps {
   server: ServerStatus;
   onClose: () => void;
+  onDeleteProcess?: (processName: string) => void;
 }
 
-const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose }) => {
+const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose, onDeleteProcess }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,6 +64,12 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
     onClose();
   };
 
+  const handleDeleteProcess = (processName: string) => {
+    if (onDeleteProcess) {
+      onDeleteProcess(processName);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div ref={dialogRef} className="bg-white rounded-lg w-[800px] max-h-[80vh] overflow-y-auto">
@@ -76,9 +84,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               onClick={closeDialog}
               className="text-gray-500 hover:text-gray-700"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <img src={IMAGES.close} alt="닫기" className="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -175,17 +181,25 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.processes')}</h3>
             <div className="space-y-3">
               {server.processes.map((process, index) => (
-                <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full ${process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
+                    <div className={`w-2 h-2 rounded-full ${server.status === 'connected' && process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
                     <div className="flex items-center space-x-2">
                       <span className="text-gray-700">{process.name}</span>
                       <span className="text-xs text-gray-500">{process.version || '버전 없음'}</span>
                     </div>
                   </div>
-                  <span className="text-sm text-gray-500">
-                    {getString(`server.process.${process.status}`)}
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleDeleteProcess(process.name)}
+                      className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all"
+                    >
+                      <img src={IMAGES.close} alt="삭제" className="w-4 h-4" />
+                    </button>
+                    <span className="text-sm text-gray-500">
+                      {getString(`server.process.${server.status === 'connected' ? process.status : 'stopped'}`)}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
