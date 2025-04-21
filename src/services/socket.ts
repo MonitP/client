@@ -4,7 +4,7 @@ import { ServerStatus } from '../types/server';
 class SocketService {
   private static instance: SocketService;
   private socket: Socket | null = null;
-  private readonly serverUrl = process.env.SERVER_URL || 'http://localhost:14001';
+  private readonly serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:14001';
   private serverStatsCallback: ((servers: ServerStatus[]) => void) | null = null;
   private isConnecting: boolean = false;
   private eventHandlers: Map<string, Set<(...args: any[]) => void>> = new Map();

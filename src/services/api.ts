@@ -2,7 +2,7 @@ import { API_URLS } from '../consts/api_urls';
 import { Notifications } from '../types/notification';
 import { ServerStatus } from '../types/server';
 
-const API_BASE_URL = process.env.SERVER_URL || 'http://localhost:14001';
+const API_BASE_URL = process.env.REACT_APP_SERVER_URL;
 
 export const api = {
   post: async <T>(url: string, data: unknown = {}): Promise<T> => {
