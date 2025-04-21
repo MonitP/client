@@ -7,6 +7,7 @@ import notificationEnabled from '../assets/images/notification_enable.svg';
 import add from '../assets/images/add.svg';
 import command from '../assets/images/command.svg';
 import close from '../assets/images/close.svg';
+import file from '../assets/images/file.svg';
 
 export const IMAGES = {
   cardGrid,
@@ -18,6 +19,7 @@ export const IMAGES = {
   add,
   command,
   close,
+  file,
 } as const;
 
 export type ImageKey = keyof typeof IMAGES; 

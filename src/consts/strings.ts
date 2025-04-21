@@ -141,6 +141,29 @@ export const STRINGS = {
       serverNotFound: '서버를 찾을 수 없습니다.'
     }
   },
+  file: {
+    page: {
+      title: '파일 관리',
+      description: '파일 관리 페이지입니다.',
+    },
+    form: {
+      server: '서버 선택',
+      selectServer: '서버를 선택하세요',
+      filePath: '파일 경로',
+      filePathPlaceholder: '다운로드할 파일의 경로를 입력하세요',
+      download: '다운로드',
+      saveAs: '저장할 파일 이름 (선택)',
+      saveAsPlaceholder: '파일 저장할 이름을 입력하세요.',
+    },
+    error: {
+      required: '서버와 파일 경로를 모두 입력해주세요.',
+      serverNotFound: '서버를 찾을 수 없습니다.',
+      download: '파일 다운로드에 실패했습니다.',
+    },
+    success: {
+      download: '파일이 성공적으로 다운로드되었습니다.',
+    },
+  },  
 } as const;
 
 type NestedKeyOf<T> = T extends object

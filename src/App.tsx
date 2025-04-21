@@ -8,6 +8,7 @@ import { NotificationProvider, useNotifications } from './contexts/NotificationC
 import NotificationPage from './pages/NotificationPage';
 import AddPage from './pages/AddPage';
 import CommandPage from './pages/CommandPage';
+import FilePage from './pages/FilePage';
 
 const SIDEBAR_ICONS = [
   { icon: IMAGES.home, component: HomePage },
@@ -16,6 +17,7 @@ const SIDEBAR_ICONS = [
   { icon: IMAGES.listView, component: ListViewPage },
   { icon: IMAGES.notification, component: NotificationPage },
   { icon: IMAGES.command, component: CommandPage },
+  { icon: IMAGES.file, component: FilePage },
 ];
 
 function Sidebar() {
