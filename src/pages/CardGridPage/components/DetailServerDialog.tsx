@@ -70,6 +70,36 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
     }
   };
 
+  const saveConfig = async (processName: string) => {
+    try {
+      const response = await fetch(`http://${server.ip}:${server.port}/download/config`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          process_name: processName,
+          ip: server.ip
+        }),
+      });
+  
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || "다운로드 실패");
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${processName}_config.js`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert(`설정 파일 다운로드 중 오류 발생: ${(error as Error).message}`);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div ref={dialogRef} className="bg-white rounded-lg w-[800px] max-h-[80vh] overflow-y-auto">
@@ -199,6 +229,12 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => saveConfig(process.name)}
+                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-all"
+                  >
+                    <img src={IMAGES.save} alt="저장" className="w-4 h-4" />
+                  </button>
                     <button
                       onClick={() => handleDeleteProcess(process.name)}
                       className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all"
