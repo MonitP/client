@@ -13,7 +13,7 @@ const CardGridPage: React.FC = () => {
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<{ text: string; id: number } | null>(null);
 
-  const selectedServer = servers.find((s) => s.id.toString() === selectedServerId);
+  const selectedServer = servers.find((s) => s?.id?.toString() === selectedServerId);
 
   useEffect(() => {
     socketService.onServerStats((updatedServers) => {
@@ -143,6 +143,7 @@ const CardGridPage: React.FC = () => {
 
             <div className="p-4 space-y-3">
               {server.processes
+                .filter(process => process.name === 'RSS' || process.name === 'SCI')
                 .map((process, index) => (
                   <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">

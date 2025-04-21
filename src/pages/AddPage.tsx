@@ -6,7 +6,7 @@ import Toast from '../components/Toast';
 import { useServers } from '../contexts/ServerContext';
 
 const AddPage: React.FC = () => {
-  const { addServer } = useServers();
+  const { addServer, setServers } = useServers();
 
   const [formData, setFormData] = useState<AddServerRequest>({
     name: '',
@@ -85,8 +85,11 @@ const AddPage: React.FC = () => {
         addServer(newServer);
         setToastMessage({ text: getString('add.form.success'), id: Date.now() });
         setFormData({ name: '', code: '', ip: '', port: '' });
+        const servers = await serverApi.getAllData();
+        setServers(servers);
       } catch (error) {
         console.error('서버 추가 실패:', error);
+        setToastMessage({ text: getString('add.form.error'), id: Date.now() });
       }
     }
   };

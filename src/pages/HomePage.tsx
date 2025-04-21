@@ -120,7 +120,11 @@ const HomePage: React.FC = () => {
           <h3 className="text-xl font-semibold text-gray-800 mb-6">{getString('home.issues.title')}</h3>
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
             {servers
-              .filter(server => server.status === 'disconnected' || server.cpu > 80 || server.ram > 8192)
+              .filter(server => server.status === 'disconnected' || 
+                server.cpu > 80 || 
+                server.ram > 80 || 
+                server.disk > 80 || 
+                server.gpu > 80)
               .map(server => (
                 <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
@@ -135,6 +139,12 @@ const HomePage: React.FC = () => {
                       <p className="text-sm text-gray-500 whitespace-nowrap">
                         {getString('home.issues.stats.ram')} : {server.ram || 0}%
                       </p>
+                      <p className="text-sm text-gray-500 whitespace-nowrap">
+                        {getString('home.issues.stats.disk')} : {server.disk || 0}%
+                      </p>
+                      <p className="text-sm text-gray-500 whitespace-nowrap">
+                        {getString('home.issues.stats.gpu')} : {server.gpu || 0}%
+                      </p>
                     </div>
                   </div>
                   <div className="text-sm text-gray-500 whitespace-nowrap">
@@ -142,7 +152,11 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
               ))}
-              {servers.filter(server => server.status === 'disconnected' || server.cpu > 80 || server.ram > 8192).length === 0 && (
+              {servers.filter(server => server.status === 'disconnected' || 
+                server.cpu > 80 || 
+                server.ram > 80 || 
+                server.disk > 80 || 
+                server.gpu > 80).length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   {getString('home.issues.noIssues')}
                 </div>
@@ -156,7 +170,10 @@ const HomePage: React.FC = () => {
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
             {servers
               .filter(server => server.status === 'connected' && 
-                ((server.cpu > 60 && server.cpu <= 80) || (server.ram > 6144 && server.ram <= 8192)))
+                ((server.cpu > 60 && server.cpu <= 80) || 
+                 (server.ram > 60 && server.ram <= 80) ||
+                 (server.disk > 60 && server.disk <= 80) ||
+                 (server.gpu > 60 && server.gpu <= 80)))
               .map(server => (
                 <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
@@ -169,7 +186,13 @@ const HomePage: React.FC = () => {
                         {getString('home.issues.stats.cpu')} : {server.cpu}%
                       </p>
                       <p className="text-sm text-gray-500 whitespace-nowrap">
-                      {getString('home.issues.stats.ram')} : {server.ram || 0}%
+                        {getString('home.issues.stats.ram')} : {server.ram || 0}%
+                      </p>
+                      <p className="text-sm text-gray-500 whitespace-nowrap">
+                        {getString('home.issues.stats.disk')} : {server.disk || 0}%
+                      </p>
+                      <p className="text-sm text-gray-500 whitespace-nowrap">
+                        {getString('home.issues.stats.gpu')} : {server.gpu || 0}%
                       </p>
                     </div>
                   </div>
@@ -179,7 +202,10 @@ const HomePage: React.FC = () => {
                 </div>
               ))}
               {servers.filter(server => server.status === 'connected' && 
-                ((server.cpu > 60 && server.cpu <= 80) || (server.ram > 6144 && server.ram <= 8192))).length === 0 && (
+                ((server.cpu > 60 && server.cpu <= 80) || 
+                 (server.ram > 60 && server.ram <= 80) ||
+                 (server.disk > 60 && server.disk <= 80) ||
+                 (server.gpu > 60 && server.gpu <= 80))).length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   {getString('home.warnings.noWarnings')}
                 </div>

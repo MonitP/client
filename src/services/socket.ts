@@ -4,6 +4,7 @@ import { ServerStatus } from '../types/server';
 class SocketService {
   private static instance: SocketService;
   private socket: Socket | null = null;
+  private readonly serverUrl = process.env.SERVER_URL || 'http://localhost:14001';
   private serverStatsCallback: ((servers: ServerStatus[]) => void) | null = null;
   private isConnecting: boolean = false;
   private eventHandlers: Map<string, Set<(...args: any[]) => void>> = new Map();
@@ -24,7 +25,7 @@ class SocketService {
     }
 
     this.isConnecting = true;
-    this.socket = io('http://localhost:14001', {
+    this.socket = io(this.serverUrl, {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

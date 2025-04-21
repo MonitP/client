@@ -180,7 +180,16 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.processes')}</h3>
             <div className="space-y-3">
-              {server.processes.map((process, index) => (
+              {server.processes
+                .sort((a, b) => {
+                  if (a.name === 'RSS') return -1;
+                  if (b.name === 'RSS') return 1;
+                  if (a.name === 'SCI') return -1;
+                  if (b.name === 'SCI') return 1;
+
+                  return a.name.localeCompare(b.name);
+                })
+                .map((process, index) => (
                 <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
                   <div className="flex items-center space-x-3">
                     <div className={`w-2 h-2 rounded-full ${server.status === 'connected' && process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />

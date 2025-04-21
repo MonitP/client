@@ -73,7 +73,9 @@ export const STRINGS = {
       title: '문제 발생 서버',
       stats: {
         cpu: 'CPU',
-        ram: 'RAM'
+        ram: 'RAM',
+        disk: '디스크',
+        gpu: 'GPU'
       },
       noIssues: '문제가 발생한 서버가 없습니다.',
       noServers: '등록한 서버가 없습니다.',
