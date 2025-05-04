@@ -10,6 +10,7 @@ import AddPage from './pages/AddPage';
 import CommandPage from './pages/CommandPage';
 import FilePage from './pages/FilePage';
 import MailServicePage from './pages/MailServicePage';
+import LogPage from './pages/LogPage';
 
 const SIDEBAR_ICONS = [
   { icon: IMAGES.home, component: HomePage },
@@ -20,6 +21,7 @@ const SIDEBAR_ICONS = [
   { icon: IMAGES.command, component: CommandPage },
   { icon: IMAGES.file, component: FilePage },
   { icon: IMAGES.mail, component: MailServicePage },
+  { icon: IMAGES.log, component: LogPage },
 ];
 
 function Sidebar() {

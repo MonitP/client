@@ -10,6 +10,7 @@ import close from '../assets/images/close.svg';
 import file from '../assets/images/file.svg';
 import save from '../assets/images/save.svg';
 import mail from '../assets/images/mail.svg';
+import log from '../assets/images/log.svg';
 
 export const IMAGES = {
   cardGrid,
@@ -24,6 +25,7 @@ export const IMAGES = {
   file,
   save,
   mail,
+  log,
 } as const;
 
 export type ImageKey = keyof typeof IMAGES; 

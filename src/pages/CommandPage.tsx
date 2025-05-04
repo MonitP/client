@@ -82,7 +82,7 @@ const CommandPage: React.FC = () => {
               <option value="">{getString('command.selectServerPlaceholder')}</option>
               {servers.map(server => (
                 <option key={server.code} value={server.code}>
-                  {server.name} ({server.ip}:{server.port})
+                  {server.name} ({server.code})
                 </option>
               ))}
             </select>

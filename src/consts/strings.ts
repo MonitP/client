@@ -204,6 +204,33 @@ export const STRINGS = {
       invalid: '올바른 이메일 주소를 입력해주세요.',
     },
   },
+  log: {
+    page: {
+      title: '로그',
+    },
+    form: {
+      server: '서버 선택',
+    },
+    list: {
+      title: '로그 목록',
+      noLogs: '로그가 없습니다.',
+    },
+    filter: {
+      all: '전체',
+    },
+    type: {
+      error: '오류',
+      warning: '경고',
+      info: '정보',
+    },
+  },
+  nav: {
+    title: '서버 모니터링',
+    servers: '서버',
+    notification: '알림',
+    mail: '메일',
+    log: '로그',
+  },
 } as const;
 
 type NestedKeyOf<T> = T extends object
