@@ -62,6 +62,7 @@ const MailServicePage: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await mailApi.delete(id);
+      setToastMessage({ text: getString('mail.delete.success'), id: Date.now() });
       loadMails();
     } catch (error) {
       console.error('메일 삭제 실패:', error);
