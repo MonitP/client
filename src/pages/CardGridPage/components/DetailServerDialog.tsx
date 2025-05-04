@@ -222,7 +222,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                 .map((process, index) => (
                 <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full ${server.status === 'connected' && process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
+                    <div className={`w-2 h-2 rounded-full ${process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
                     <div className="flex items-center space-x-2">
                       <span className="text-gray-700">{process.name}</span>
                       <span className="text-xs text-gray-500">{process.version || '버전 없음'}</span>
@@ -242,7 +242,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                       <img src={IMAGES.close} alt="삭제" className="w-4 h-4" />
                     </button>
                     <span className="text-sm text-gray-500">
-                      {getString(`server.process.${server.status === 'connected' ? process.status : 'stopped'}`)}
+                      {getString(`server.process.${process.status}`)}
                     </span>
                   </div>
                 </div>
