@@ -171,7 +171,39 @@ export const STRINGS = {
     success: {
       download: '파일이 성공적으로 다운로드되었습니다.',
     },
-  },  
+  },
+  mail: {
+    page: {
+      title: '메일 수신자 관리',
+    },
+    form: {
+      email: {
+        label: '이메일 주소',
+        placeholder: '이메일 주소를 입력하세요',
+      },
+      submit: '추가',
+    },
+    list: {
+      title: '등록된 이메일 목록',
+      noEmails: '등록된 이메일이 없습니다.',
+      delete: '삭제',
+    },
+    add: {
+      success: '이메일이 등록되었습니다.',
+      error: '이메일 등록에 실패했습니다.',
+    },
+    delete: {
+      success: '이메일이 삭제되었습니다.',
+      error: '이메일 삭제에 실패했습니다.',
+    },
+    load: {
+      error: '메일 목록을 불러오는데 실패했습니다.',
+    },
+    validation: {
+      required: '이메일 주소를 입력해주세요.',
+      invalid: '올바른 이메일 주소를 입력해주세요.',
+    },
+  },
 } as const;
 
 type NestedKeyOf<T> = T extends object

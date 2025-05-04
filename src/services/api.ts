@@ -63,3 +63,14 @@ export const notificationApi = {
   deleteNotification: (id: number) => api.delete(`${API_URLS.notification.base}/${id}`),
   deleteAllNotifications: () => api.delete(`${API_URLS.notification.base}`),
 };
+
+export const mailApi = {
+  add: (email: string) => api.post(`${API_URLS.mail.base}`, { email }),
+  getAll: async () => {
+    const res = await api.get<{ statusCode: number; message: string; data: any[] }>(
+      `${API_URLS.mail.base}`
+    );
+    return res.data;
+  },
+  delete: (id: number) => api.delete(`${API_URLS.mail.base}/${id}`),
+};

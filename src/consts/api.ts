@@ -8,5 +8,6 @@ export const API_URLS = {
   },
   mail: {
     base: '/api/mail',
+    create: '/create',
   },
 } as const; 
