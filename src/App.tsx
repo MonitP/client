@@ -23,7 +23,6 @@ const SIDEBAR_ICONS = [
 function Sidebar() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
   const { notifications, isNew } = useNotifications();
-  const hasUnreadNotifications = notifications.some(notification => !notification.read);
 
   const CurrentPage = selectedIndex !== null ? SIDEBAR_ICONS[selectedIndex].component : null;
 

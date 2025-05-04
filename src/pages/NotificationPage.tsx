@@ -8,6 +8,8 @@ import {
   NotificationColors,
   NotificationType,
 } from '../types/notification';
+import { IMAGES } from '../consts/images';
+import Toast from '../components/Toast';
 
 const NotificationPage: React.FC = () => {
   const {
@@ -18,6 +20,7 @@ const NotificationPage: React.FC = () => {
     setIsNew,
   } = useNotifications();
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [toastMessage, setToastMessage] = useState<{ text: string; id: number } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -42,8 +45,31 @@ const NotificationPage: React.FC = () => {
     );
   }, [notifications, searchQuery]);
 
+  const handleDelete = async (id: number) => {
+    try {
+      await notificationApi.deleteNotification(id);
+      setNotifications(notifications.filter(n => n.id !== id));
+      setToastMessage({ text: getString('notification.delete.success'), id: Date.now() });
+    } catch (error) {
+      console.error('알림 삭제 실패:', error);
+      setToastMessage({ text: getString('notification.delete.error'), id: Date.now() });
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      await notificationApi.deleteAllNotifications();
+      setNotifications([]);
+      setToastMessage({ text: getString('notification.delete.all.success'), id: Date.now() });
+    } catch (error) {
+      console.error('알림 전체 삭제 실패:', error);
+      setToastMessage({ text: getString('notification.delete.all.error'), id: Date.now() });
+    }
+  };
+
   return (
     <div className="space-y-4">
+      <Toast message={toastMessage} />
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold text-gray-800">
           {getString('notification.page.title')}
@@ -62,6 +88,12 @@ const NotificationPage: React.FC = () => {
           >
             {getString('notification.page.markAllAsRead')}
           </button>
+          <button
+            onClick={handleDeleteAll}
+            className="text-sm text-red-500 hover:text-red-700"
+          >
+            {getString('notification.page.deleteAll')}
+          </button>
         </div>
       </div>
 
@@ -73,7 +105,7 @@ const NotificationPage: React.FC = () => {
         filteredNotifications.map((n) => (
           <div
             key={n.id}
-            className={`bg-white rounded-lg shadow p-6 ${
+            className={`bg-white rounded-lg shadow p-6 relative ${
               !n.read ? 'border-l-4 border-blue-500' : ''
             }`}
           >
@@ -105,6 +137,12 @@ const NotificationPage: React.FC = () => {
                 )}
               </div>
             </div>
+            <button
+              onClick={() => handleDelete(n.id)}
+              className="absolute bottom-4 right-4 w-4 h-4 opacity-50 hover:opacity-100 transition-opacity"
+            >
+              <img src={IMAGES.close} alt="close" className="w-full h-full" />
+            </button>
           </div>
         ))
       )}

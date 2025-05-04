@@ -38,12 +38,20 @@ export const STRINGS = {
     },
     page: {
       title: '알림',
-      searchPlaceholder: '서버 이름 또는 내용 검색',
-      markAllAsRead: '모두 읽음으로 표시',
-      markAsRead: '읽음으로 표시',
-      noNotifications: '새로운 알림이 없습니다.',
-      noSearchResults: '검색 결과가 없습니다.'
-    }
+      searchPlaceholder: '검색하기',
+      markAsRead: '읽음 처리',
+      markAllAsRead: '모두 읽음 처리',
+      noNotifications: '알림이 없습니다.',
+      deleteAll: '알림 모두 삭제',
+    },
+    delete: {
+      success: '알림이 삭제되었습니다.',
+      error: '알림 삭제에 실패했습니다.',
+      all: {
+        success: '모든 알림이 삭제되었습니다.',
+        error: '알림 전체 삭제에 실패했습니다.',
+      },
+    },
   },
   home: {
     title: '홈',

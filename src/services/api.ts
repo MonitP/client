@@ -60,4 +60,6 @@ export const notificationApi = {
   },
   readNotification: (id: number) => api.post(`${API_URLS.notification.base}/${id}/read`),
   readAllNotification: () => api.post(`${API_URLS.notification.base}/read-all`),
+  deleteNotification: (id: number) => api.delete(`${API_URLS.notification.base}/${id}`),
+  deleteAllNotifications: () => api.delete(`${API_URLS.notification.base}`),
 };
