@@ -66,7 +66,7 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               ...updated,
               cpuHistory: server.cpuHistory || [],
               ramHistory: server.ramHistory || [],
-              processes: server.processes || [],
+              processes: updated.processes || [],
               status: updated.status as 'connected' | 'disconnected' | 'warning',
             };
           }

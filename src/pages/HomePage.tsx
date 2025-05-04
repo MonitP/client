@@ -13,18 +13,24 @@ const HomePage: React.FC = () => {
     total: servers.length,
     connected: servers.filter(s => s.status === 'connected').length,
     disconnected: servers.filter(s => s.status === 'disconnected').length,
-    avgCpu: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.cpu || 0), 0) / servers.length : 0,
-    avgRAM: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.ram || 0), 0) / servers.length : 0,
-    avgGpu: servers.length > 0 ? servers.reduce((acc, s) => acc + (s.gpu || 0), 0) / servers.length : 0,
+    avgCpu: servers.filter(s => s.status === 'connected').length > 0 
+      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.cpu || 0), 0) / servers.filter(s => s.status === 'connected').length 
+      : 0,
+    avgRAM: servers.filter(s => s.status === 'connected').length > 0 
+      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.ram || 0), 0) / servers.filter(s => s.status === 'connected').length 
+      : 0,
+    avgGpu: servers.filter(s => s.status === 'connected').length > 0 
+      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.gpu || 0), 0) / servers.filter(s => s.status === 'connected').length 
+      : 0,
     totalProcesses: servers.length > 0
-    ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
-    : 0,
-  runningProcesses: servers.length > 0
-    ? servers.reduce(
-        (acc, s) => acc + (s.processes?.filter(p => p.status === 'running').length ?? 0),
-        0
-      )
-    : 0,
+      ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
+      : 0,
+    runningProcesses: servers.length > 0
+      ? servers.reduce(
+          (acc, s) => acc + (s.processes?.filter(p => p.status === 'running').length ?? 0),
+          0
+        )
+      : 0,
   };
 
   return (
