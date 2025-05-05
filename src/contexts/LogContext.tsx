@@ -33,10 +33,17 @@ interface LogContextType {
     startDate?: Date;
     endDate?: Date;
     type?: string;
+    search?: string;
   }) => Promise<void>;
   setPage: (page: number) => void;
   isLoading: boolean;
   error: string | null;
+  selectedType: string;
+  setSelectedType: (type: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  selectedServer: string;
+  setSelectedServer: (server: string) => void;
 }
 
 const LogContext = createContext<LogContextType | undefined>(undefined);
@@ -48,6 +55,9 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [pageSize] = useState(50);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedServer, setSelectedServer] = useState<string>('');
   const { servers } = useServers();
   const isFirstLoad = useRef(true);
 
@@ -58,10 +68,13 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     startDate?: Date;
     endDate?: Date;
     type?: string;
+    search?: string;
   }) => {
     try {
       setIsLoading(true);
       setError(null);
+      
+      console.log('로그 요청 파라미터:', params);
       
       const response = await axios.get<LogResponse>(
         `${process.env.REACT_APP_SERVER_URL}${API_URLS.logs.base}`,
@@ -69,7 +82,7 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       );
       
       if (response.data.statusCode === 200 && response.data.data?.logs) {
-        const processedLogs = response.data.data.logs.map(log => ({
+        const processedLogs = response.data.data.logs.map(log => ({ 
           ...log,
           timestamp: new Date(log.timestamp),
           serverName: servers.find(server => server.code === log.serverCode)?.name || 'Unknown Server'
@@ -110,7 +123,14 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setPage = useCallback((page: number) => {
     setCurrentPage(page);
-  }, []);
+    fetchLogs({ 
+      page, 
+      limit: pageSize,
+      type: selectedType,
+      search: searchQuery,
+      serverCode: selectedServer 
+    });
+  }, [fetchLogs, pageSize, selectedType, searchQuery, selectedServer]);
 
   // 초기 로딩
   useEffect(() => {
@@ -138,8 +158,14 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     fetchLogs,
     setPage,
     isLoading,
-    error
-  }), [total, currentPage, pageSize, fetchLogs, setPage, isLoading, error]);
+    error,
+    selectedType,
+    setSelectedType,
+    searchQuery,
+    setSearchQuery,
+    selectedServer,
+    setSelectedServer
+  }), [logs, total, currentPage, pageSize, fetchLogs, setPage, isLoading, error, selectedType, searchQuery, selectedServer]);
 
   return (
     <LogContext.Provider value={contextValue}>

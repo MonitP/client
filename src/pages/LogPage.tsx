@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { getString } from '../consts/strings';
 import { IMAGES } from '../consts/images';
 import { COLORS } from '../consts/colors';
@@ -8,14 +8,46 @@ import Toast from '../components/Toast';
 
 const LogPage: React.FC = () => {
   const { servers } = useServers();
-  const { logs = [], total, currentPage, pageSize, setPage, isLoading, error } = useLogs();
-  const [selectedServer, setSelectedServer] = useState<string>('');
+  const { 
+    logs = [], 
+    total, 
+    currentPage, 
+    pageSize, 
+    setPage, 
+    isLoading, 
+    error,
+    selectedType,
+    setSelectedType,
+    searchQuery,
+    setSearchQuery,
+    selectedServer,
+    setSelectedServer,
+    fetchLogs
+  } = useLogs();
   const [toastMessage, setToastMessage] = useState<{ text: string; id: number } | null>(null);
   const logContainerRef = useRef<HTMLDivElement>(null);
 
-  const filteredLogs = selectedServer
-    ? logs.filter(log => log.serverCode === selectedServer)
-    : logs;
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setPage(1); // 검색 시 첫 페이지로 이동
+  };
+
+  const handleTypeChange = (type: string) => {
+    console.log('타입 변경:', type);
+    setSelectedType(type);
+    fetchLogs({ 
+      page: 1, 
+      limit: pageSize,
+      type: type,
+      search: searchQuery,
+      serverCode: selectedServer 
+    });
+  };
+
+  const handleServerChange = (server: string) => {
+    setSelectedServer(server);
+    setPage(1); // 서버 변경 시 첫 페이지로 이동
+  };
 
   const totalPages = Math.ceil(total / pageSize);
 
@@ -28,34 +60,51 @@ const LogPage: React.FC = () => {
   return (
     <div className="space-y-4">
       <Toast message={toastMessage} />
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-        {getString('log.page.title')}
-      </h2>
-
-      <div className="mb-4">
-        <label htmlFor="server-select" className="block text-sm font-medium text-gray-700 mb-1">
-          {getString('log.form.server')}
-        </label>
-        <select
-          id="server-select"
-          value={selectedServer}
-          onChange={(e) => setSelectedServer(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">{getString('log.filter.all')}</option>
-          {servers.map((server) => (
-            <option key={server.code} value={server.code}>
-              {server.name}
-            </option>
-          ))}
-        </select>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          {getString('log.page.title')}
+        </h2>
+        <div className="flex items-center space-x-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="로그 내용 검색"
+            className="px-4 py-2 border border-gray-300 rounded-lg"
+          />
+          <select
+            value={selectedServer}
+            onChange={(e) => handleServerChange(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="">{getString('log.filter.all')}</option>
+            {servers.map((server) => (
+              <option key={server.code} value={server.code}>
+                {server.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-4 py-5 sm:px-6">
+        <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
           <h3 className="text-lg font-medium text-gray-900">
             {getString('log.list.title')}
           </h3>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-500">타입:</span>
+            <select
+              value={selectedType}
+              onChange={(e) => handleTypeChange(e.target.value)}
+              className="px-3 py-1 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="">{getString('log.filter.all')}</option>
+              <option value="error">{getString('log.type.error')}</option>
+              <option value="warning">{getString('log.type.warning')}</option>
+              <option value="info">{getString('log.type.info')}</option>
+            </select>
+          </div>
         </div>
         <div className="border-t border-gray-200">
           {isLoading ? (
@@ -66,7 +115,7 @@ const LogPage: React.FC = () => {
             <div className="px-4 py-5 text-center text-red-500">
               {error}
             </div>
-          ) : filteredLogs.length === 0 ? (
+          ) : logs.length === 0 ? (
             <div className="px-4 py-5 text-center text-gray-500">
               {getString('log.list.noLogs')}
             </div>
@@ -74,7 +123,7 @@ const LogPage: React.FC = () => {
             <>
               <div ref={logContainerRef} className="max-h-[600px] overflow-y-auto">
                 <ul className="divide-y divide-gray-200">
-                  {filteredLogs.map((log, index) => (
+                  {logs.map((log, index) => (
                     <li key={`${log.serverCode}-${log.timestamp.getTime()}-${index}`} className="px-4 py-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
