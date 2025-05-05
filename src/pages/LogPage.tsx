@@ -3,13 +3,18 @@ import { getString } from '../consts/strings';
 import { IMAGES } from '../consts/images';
 import { COLORS } from '../consts/colors';
 import { useServers } from '../contexts/ServerContext';
+import { useLogs } from '../contexts/LogContext';
 import Toast from '../components/Toast';
 
 const LogPage: React.FC = () => {
   const { servers } = useServers();
+  const { logs } = useLogs();
   const [selectedServer, setSelectedServer] = useState<string>('');
-  const [logs, setLogs] = useState<any[]>([]);
   const [toastMessage, setToastMessage] = useState<{ text: string; id: number } | null>(null);
+
+  const filteredLogs = selectedServer
+    ? logs.filter(log => log.serverCode === selectedServer)
+    : logs;
 
   return (
     <div className="space-y-4">
@@ -19,7 +24,7 @@ const LogPage: React.FC = () => {
       </h2>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="space-y-4">
+        <div className="space-y-4"> 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {getString('log.form.server')}
@@ -39,15 +44,15 @@ const LogPage: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            {logs.length === 0 ? (
+            {filteredLogs.length === 0 ? (
               <div className="text-center text-gray-500 py-8">
                 {getString('log.list.noLogs')}
               </div>
             ) : (
               <div className="space-y-4">
-                {logs.map((log) => (
+                {filteredLogs.map((log, index) => (
                   <div
-                    key={log.id}
+                    key={`${log.timestamp}-${index}`}
                     className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex justify-between items-start">

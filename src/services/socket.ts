@@ -63,6 +63,10 @@ class SocketService {
     this.eventHandlers.clear();
   }
 
+  isConnected(): boolean {
+    return this.socket?.connected || false;
+  }
+
   onServerStats(callback: (servers: ServerStatus[]) => void) {
     this.serverStatsCallback = callback;
     if (!this.socket) {
@@ -107,6 +111,30 @@ class SocketService {
   
   offNotification(callback: () => void) {
     this.off('notifications', callback);
+  }
+
+  onServerLog(callback: (log: {
+    serverCode: string;
+    serverName: string;
+    type: 'error' | 'warning' | 'info';
+    message: string;
+    timestamp: Date;
+  }) => void) {
+    console.log('server:log 이벤트 등록');
+    this.on('server:log', (data) => {
+      console.log('server:log 이벤트 수신:', data);
+      callback(data);
+    });
+  }
+
+  offServerLog(callback: (log: {
+    serverCode: string;
+    serverName: string;
+    type: 'error' | 'warning' | 'info';
+    message: string;
+    timestamp: Date;
+  }) => void) {
+    this.off('server:log', callback);
   }
 
   sendCommand(serverCode: string, command: string) {

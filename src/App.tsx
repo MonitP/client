@@ -5,6 +5,7 @@ import ListViewPage from './pages/ServerListPage';
 import HomePage from './pages/HomePage';
 import { ServerProvider } from './contexts/ServerContext';
 import { NotificationProvider, useNotifications } from './contexts/NotificationContext';
+import { LogProvider } from './contexts/LogContext';
 import NotificationPage from './pages/NotificationPage';
 import AddPage from './pages/AddPage';
 import CommandPage from './pages/CommandPage';
@@ -68,9 +69,11 @@ function Sidebar() {
 function App() {
   return (
     <ServerProvider>
-      <NotificationProvider>
-        <Sidebar />
-      </NotificationProvider>
+      <LogProvider>
+        <NotificationProvider>
+          <Sidebar />
+        </NotificationProvider>
+      </LogProvider>
     </ServerProvider>
   );
 }
