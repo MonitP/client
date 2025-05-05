@@ -217,11 +217,19 @@ export const STRINGS = {
     },
     filter: {
       all: '전체',
+      type: '타입',
+      searchPlaceholder: '로그 내용 검색',
     },
     type: {
       error: '오류',
       warning: '경고',
       info: '정보',
+    },
+    pagination: {
+      loading: '로딩 중...',
+      total: '총 {total}개의 로그 중 {start} - {end}',
+      prev: '이전',
+      next: '다음',
     },
   },
   nav: {

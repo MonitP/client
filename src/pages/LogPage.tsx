@@ -46,7 +46,13 @@ const LogPage: React.FC = () => {
 
   const handleServerChange = (server: string) => {
     setSelectedServer(server);
-    setPage(1); // 서버 변경 시 첫 페이지로 이동
+    fetchLogs({ 
+      page: 1, 
+      limit: pageSize,
+      type: selectedType,
+      search: searchQuery,
+      serverCode: server 
+    });
   };
 
   const totalPages = Math.ceil(total / pageSize);
@@ -69,7 +75,7 @@ const LogPage: React.FC = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder="로그 내용 검색"
+            placeholder={getString('log.filter.searchPlaceholder')}
             className="px-4 py-2 border border-gray-300 rounded-lg"
           />
           <select
@@ -93,7 +99,7 @@ const LogPage: React.FC = () => {
             {getString('log.list.title')}
           </h3>
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">타입:</span>
+            <span className="text-sm text-gray-500">{getString('log.filter.type')} :</span>
             <select
               value={selectedType}
               onChange={(e) => handleTypeChange(e.target.value)}
@@ -109,7 +115,7 @@ const LogPage: React.FC = () => {
         <div className="border-t border-gray-200">
           {isLoading ? (
             <div className="px-4 py-5 text-center text-gray-500">
-              로딩 중...
+              {getString('log.pagination.loading')}
             </div>
           ) : error ? (
             <div className="px-4 py-5 text-center text-red-500">
@@ -153,11 +159,10 @@ const LogPage: React.FC = () => {
               {/* 페이지네이션 */}
               <div className="px-4 py-3 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 sm:px-6 gap-4">
                 <div className="text-sm text-gray-700 whitespace-nowrap">
-                  총 <span className="font-medium">{total}</span>개의 로그 중{' '}
-                  <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> -{' '}
-                  <span className="font-medium">
-                    {Math.min(currentPage * pageSize, total)}
-                  </span>
+                  {getString('log.pagination.total')
+                    .replace('{total}', total.toString())
+                    .replace('{start}', ((currentPage - 1) * pageSize + 1).toString())
+                    .replace('{end}', Math.min(currentPage * pageSize, total).toString())}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -165,7 +170,7 @@ const LogPage: React.FC = () => {
                     disabled={currentPage === 1}
                     className="relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    이전
+                    {getString('log.pagination.prev')}
                   </button>
                   <div className="flex items-center gap-1">
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -202,6 +207,7 @@ const LogPage: React.FC = () => {
                     disabled={currentPage === totalPages}
                     className="relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
+                    {getString('log.pagination.next')}
                     다음
                   </button>
                 </div>
