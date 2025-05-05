@@ -9,4 +9,7 @@ export const API_URLS = {
   mail: {
     base: '/api/mail',
   },
+  logs: {
+    base: '/api/logs',
+  },
 } as const; 

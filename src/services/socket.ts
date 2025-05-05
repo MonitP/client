@@ -120,9 +120,7 @@ class SocketService {
     message: string;
     timestamp: Date;
   }) => void) {
-    console.log('server:log 이벤트 등록');
-    this.on('server:log', (data) => {
-      console.log('server:log 이벤트 수신:', data);
+    this.on('server-log', (data) => {
       callback(data);
     });
   }
@@ -134,7 +132,7 @@ class SocketService {
     message: string;
     timestamp: Date;
   }) => void) {
-    this.off('server:log', callback);
+    this.off('server0log', callback);
   }
 
   sendCommand(serverCode: string, command: string) {

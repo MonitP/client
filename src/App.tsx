@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IMAGES } from './consts/images';
 import CardGridPage from './pages/CardGridPage';
 import ListViewPage from './pages/ServerListPage';
 import HomePage from './pages/HomePage';
 import { ServerProvider } from './contexts/ServerContext';
 import { NotificationProvider, useNotifications } from './contexts/NotificationContext';
-import { LogProvider } from './contexts/LogContext';
+import { LogProvider, useLogs } from './contexts/LogContext';
 import NotificationPage from './pages/NotificationPage';
 import AddPage from './pages/AddPage';
 import CommandPage from './pages/CommandPage';
@@ -71,11 +71,15 @@ function App() {
     <ServerProvider>
       <LogProvider>
         <NotificationProvider>
-          <Sidebar />
+          <AppContent />
         </NotificationProvider>
       </LogProvider>
     </ServerProvider>
   );
+}
+
+function AppContent() {
+  return <Sidebar />;
 }
 
 export default App;
