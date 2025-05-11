@@ -29,7 +29,7 @@ const LogPage: React.FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setPage(1); // 검색 시 첫 페이지로 이동
+    setPage(1);
   };
 
   const handleTypeChange = (type: string) => {
@@ -175,13 +175,11 @@ const LogPage: React.FC = () => {
                   <div className="flex items-center gap-1">
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
                       .filter(page => {
-                        // 현재 페이지 주변 2페이지와 처음/끝 페이지만 표시
                         return page === 1 || 
                                page === totalPages || 
                                Math.abs(page - currentPage) <= 2;
                       })
                       .map((page, index, array) => {
-                        // 페이지 번호 사이에 ... 표시
                         const showEllipsis = index > 0 && array[index - 1] !== page - 1;
                         return (
                           <React.Fragment key={page}>
@@ -208,7 +206,6 @@ const LogPage: React.FC = () => {
                     className="relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {getString('log.pagination.next')}
-                    다음
                   </button>
                 </div>
               </div>

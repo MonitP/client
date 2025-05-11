@@ -16,6 +16,7 @@ export const STRINGS = {
       ram: 'RAM',
       disk: '디스크',
       gpu: 'GPU',
+      network: '네트워크',
     },
     detail: {
       title: '서버 상세 정보',
@@ -75,6 +76,10 @@ export const STRINGS = {
       avgGpu: {
         title: '평균 GPU 사용량',
         description: '전체 서버 평균'
+      },
+      avgNetwork: {
+        title: '평균 네트워크 사용량',
+        description: '전체 서버 평균'
       }
     },
     issues: {
@@ -83,7 +88,8 @@ export const STRINGS = {
         cpu: 'CPU',
         ram: 'RAM',
         disk: '디스크',
-        gpu: 'GPU'
+        gpu: 'GPU',
+        network: '네트워크'
       },
       noIssues: '문제가 발생한 서버가 없습니다.',
       noServers: '등록한 서버가 없습니다.',

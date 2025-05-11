@@ -16,6 +16,7 @@ export interface ServerStatus {
   ram: number;
   disk: number;
   gpu: number;
+  network: number;
   processes: ProcessStatus[];
   lastUpdate: Date;
   cpuHistory: number[];

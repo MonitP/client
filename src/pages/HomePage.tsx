@@ -22,6 +22,9 @@ const HomePage: React.FC = () => {
     avgGpu: servers.filter(s => s.status === 'connected').length > 0 
       ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.gpu || 0), 0) / servers.filter(s => s.status === 'connected').length 
       : 0,
+    avgNetwork: servers.filter(s => s.status === 'connected').length > 0 
+      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.network || 0), 0) / servers.filter(s => s.status === 'connected').length 
+      : 0,
     totalProcesses: servers.length > 0
       ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
       : 0,
@@ -62,7 +65,7 @@ const HomePage: React.FC = () => {
         {/* 리소스 사용량 */}
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-6">{getString('home.resources.title')}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
             {/* CPU */}
             <div className="flex flex-col items-center text-center space-y-4">
@@ -113,13 +116,30 @@ const HomePage: React.FC = () => {
                 />
               </div>
               <div>
-              <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgGpu.title')}</h4>
-              <p className="text-sm text-gray-500">{getString('home.resources.avgGpu.description')}</p>
+                <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgGpu.title')}</h4>
+                <p className="text-sm text-gray-500">{getString('home.resources.avgGpu.description')}</p>
+              </div>
+            </div>
+
+            {/* Network */}
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-32">
+                <CircularProgressbar
+                  value={stats.avgNetwork}
+                  text={`${stats.avgNetwork.toFixed(1)}%`}
+                  styles={buildStyles({
+                    pathColor: stats.avgNetwork > 80 ? '#EF4444' : '#10B981',
+                    textColor: '#374151',
+                  })}
+                />
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-700">{getString('home.resources.avgNetwork.title')}</h4>
+                <p className="text-sm text-gray-500">{getString('home.resources.avgNetwork.description')}</p>
               </div>
             </div>
           </div>
         </div>
-
 
         {/* 최근 문제 발생 서버 */}
         <div className="bg-white rounded-lg shadow p-6">
@@ -130,7 +150,8 @@ const HomePage: React.FC = () => {
                 server.cpu > 80 || 
                 server.ram > 80 || 
                 server.disk > 80 || 
-                server.gpu > 80)
+                server.gpu > 80 ||
+                server.network > 80)
               .map(server => (
                 <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
@@ -151,6 +172,9 @@ const HomePage: React.FC = () => {
                       <p className="text-sm text-gray-500 whitespace-nowrap">
                         {getString('home.issues.stats.gpu')} : {server.gpu || 0}%
                       </p>
+                      <p className="text-sm text-gray-500 whitespace-nowrap">
+                        {getString('home.issues.stats.network')} : {server.network || 0}%
+                      </p>
                     </div>
                   </div>
                   <div className="text-sm text-gray-500 whitespace-nowrap">
@@ -162,7 +186,8 @@ const HomePage: React.FC = () => {
                 server.cpu > 80 || 
                 server.ram > 80 || 
                 server.disk > 80 || 
-                server.gpu > 80).length === 0 && (
+                server.gpu > 80 ||
+                server.network > 80).length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   {getString('home.issues.noIssues')}
                 </div>
@@ -179,7 +204,8 @@ const HomePage: React.FC = () => {
                 ((server.cpu > 60 && server.cpu <= 80) || 
                  (server.ram > 60 && server.ram <= 80) ||
                  (server.disk > 60 && server.disk <= 80) ||
-                 (server.gpu > 60 && server.gpu <= 80)))
+                 (server.gpu > 60 && server.gpu <= 80) ||
+                 (server.network > 60 && server.network <= 80)))
               .map(server => (
                 <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
@@ -200,6 +226,9 @@ const HomePage: React.FC = () => {
                       <p className="text-sm text-gray-500 whitespace-nowrap">
                         {getString('home.issues.stats.gpu')} : {server.gpu || 0}%
                       </p>
+                      <p className="text-sm text-gray-500 whitespace-nowrap">
+                        {getString('home.issues.stats.network')} : {server.network || 0}%
+                      </p>
                     </div>
                   </div>
                   <div className="text-sm text-gray-500 whitespace-nowrap">
@@ -211,7 +240,8 @@ const HomePage: React.FC = () => {
                 ((server.cpu > 60 && server.cpu <= 80) || 
                  (server.ram > 60 && server.ram <= 80) ||
                  (server.disk > 60 && server.disk <= 80) ||
-                 (server.gpu > 60 && server.gpu <= 80))).length === 0 && (
+                 (server.gpu > 60 && server.gpu <= 80) ||
+                 (server.network > 60 && server.network <= 80))).length === 0 && (
                 <div className="text-center text-gray-500 py-4">
                   {getString('home.warnings.noWarnings')}
                 </div>
