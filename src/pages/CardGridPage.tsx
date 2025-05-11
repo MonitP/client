@@ -119,22 +119,30 @@ const CardGridPage: React.FC = () => {
             </div>
 
             <div className="px-4 pb-4">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <div className="flex items-center space-x-1">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
+                <div className="flex items-center space-x-0.5">
                   <span className="text-gray-500">{getString('server.resources.cpu')}</span>
                   <span className="font-medium text-gray-600">{server.cpu || 0}%</span>
                 </div>
-                <div className="flex items-center space-x-1">
+                <div className="w-[1px] h-3 bg-gray-200" />
+                <div className="flex items-center space-x-0.5">
                   <span className="text-gray-500">{getString('server.resources.ram')}</span>
                   <span className="font-medium text-gray-600">{server.ram || 0}%</span>
                 </div>
-                <div className="flex items-center space-x-1">
+                <div className="w-[1px] h-3 bg-gray-200" />
+                <div className="flex items-center space-x-0.5">
                   <span className="text-gray-500">{getString('server.resources.disk')}</span>
                   <span className="font-medium text-gray-600">{server.disk || 0}%</span>
                 </div>
-                <div className="flex items-center space-x-1">
+                <div className="w-[1px] h-3 bg-gray-200" />
+                <div className="flex items-center space-x-0.5">
                   <span className="text-gray-500">{getString('server.resources.gpu')}</span>
                   <span className="font-medium text-gray-600">{server.gpu || 0}%</span>
+                </div>
+                <div className="w-[1px] h-3 bg-gray-200" />
+                <div className="flex items-center space-x-0.5">
+                  <span className="text-gray-500">{getString('server.resources.network')}</span>
+                  <span className="font-medium text-gray-600">{server.network || 0}%</span>
                 </div>
               </div>
             </div>
