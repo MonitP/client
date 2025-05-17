@@ -97,6 +97,10 @@ export const STRINGS = {
     warnings: {
       title: '경고 상태 서버',
       noWarnings: '경고 상태의 서버가 없습니다.'
+    },
+    stoppedProcesses: {
+      title: '중지된 프로세스',
+      noStoppedProcesses: '중지된 프로세스가 없습니다.'
     }
   },
   add: {

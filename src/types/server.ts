@@ -3,6 +3,7 @@ export interface ProcessStatus {
   name: string;
   version: string;
   status: 'running' | 'stopped';
+  lastUpdate?: Date;
 }
 
 export interface ServerStatus {
@@ -23,6 +24,7 @@ export interface ServerStatus {
   ramHistory: number[];
   lastChecked?: string;
   error?: string;
+  warningSince?: Date;
 }
 
 export interface Server {

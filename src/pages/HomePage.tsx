@@ -248,6 +248,44 @@ const HomePage: React.FC = () => {
               )}
           </div>
         </div>
+
+        {/* 중지된 프로세스 목록 */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-6">{getString('home.stoppedProcesses.title')}</h3>
+          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+            {servers
+              .filter(server => server.processes?.some(p => p.status === 'stopped'))
+              .map(server => (
+                <div key={server.id} className="flex flex-col p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center space-x-4 mb-2">
+                    <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <h4 className="font-medium text-gray-800">{server.name}</h4>
+                  </div>
+                  <div className="pl-7 space-y-2">
+                    {server.processes
+                      ?.filter(p => p.status === 'stopped')
+                      .map(process => (
+                        <div key={process.name} className="flex items-center justify-between text-sm">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-red-500">❌</span>
+                            <span className="text-gray-700">{process.name}</span>
+                            <span className="text-gray-500">({process.version})</span>
+                          </div>
+                          <span className="text-gray-500">
+                            {process.lastUpdate ? new Date(process.lastUpdate).toLocaleString() : ''}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ))}
+            {!servers.some(server => server.processes?.some(p => p.status === 'stopped')) && (
+              <div className="text-center text-gray-500 py-4">
+                {getString('home.stoppedProcesses.noStoppedProcesses')}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
