@@ -289,6 +289,20 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                       backgroundColor: 'rgba(59, 130, 246, 0.1)',
                       tension: 0.4,
                     },
+                    {
+                      label: getString('server.detail.history.gpu'),
+                      data: server.gpuHistory || Array(24).fill(0),
+                      borderColor: '#10B981',
+                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                      tension: 0.4,
+                    },
+                    {
+                      label: getString('server.detail.history.network'),
+                      data: server.networkHistory || Array(24).fill(0),
+                      borderColor: '#8B5CF6',
+                      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                      tension: 0.4,
+                    },
                   ],                  
                 }}
                 options={{

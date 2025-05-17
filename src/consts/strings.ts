@@ -26,7 +26,9 @@ export const STRINGS = {
       history: {
         title: '리소스 사용량 추이',
         cpu: 'CPU 사용률',
-        ram: 'RAM 사용률'
+        ram: 'RAM 사용률',
+        gpu: 'GPU 사용률',
+        network: '네트워크 사용률'
       }
     },
   },

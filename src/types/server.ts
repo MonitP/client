@@ -22,9 +22,10 @@ export interface ServerStatus {
   lastUpdate: Date;
   cpuHistory: number[];
   ramHistory: number[];
+  gpuHistory: number[];
+  networkHistory: number[];
   lastChecked?: string;
   error?: string;
-  warningSince?: Date;
 }
 
 export interface Server {
