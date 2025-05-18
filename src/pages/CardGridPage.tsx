@@ -30,6 +30,8 @@ const CardGridPage: React.FC = () => {
               ramHistory: server.ramHistory,
               processes: updated.processes || server.processes,
               status: updated.status as 'connected' | 'disconnected' | 'warning',
+              upTime: updated.upTime || server.upTime,
+              downTime: updated.downTime || server.downTime
             };
           }
 

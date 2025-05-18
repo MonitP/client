@@ -35,7 +35,9 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         status: server.status || 'disconnected',
         cpuHistory: server.cpuHistory || [],
         ramHistory: server.ramHistory || [],
-        processes: server.processes || []
+        processes: server.processes || [],
+        upTime: server.upTime || 0,
+        downTime: server.downTime || 0
       }));
       setServers(updatedData);
     } catch (error) {
@@ -51,7 +53,6 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     
     socketService.onServerStats((updatedServers) => {
       if (!Array.isArray(updatedServers)) {
-        console.error('Invalid server data received:', updatedServers);
         return;
       }
 
@@ -61,14 +62,20 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return prevServers.map(server => {
           const updated = updatedMap.get(server.code);
           if (updated) {
-            return {
+            const newServer = {
               ...server,
               ...updated,
               cpuHistory: server.cpuHistory || [],
               ramHistory: server.ramHistory || [],
+              gpuHistory: server.gpuHistory || [],
+              networkHistory: server.networkHistory || [],
               processes: updated.processes || [],
               status: updated.status as 'connected' | 'disconnected' | 'warning',
+              upTime: updated.upTime,
+              downTime: updated.downTime
             };
+            
+            return newServer;
           }
     
           return {

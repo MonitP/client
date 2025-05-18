@@ -29,7 +29,15 @@ export const STRINGS = {
         ram: 'RAM 사용률',
         gpu: 'GPU 사용률',
         network: '네트워크 사용률'
-      }
+      },
+      lastUpdate: '마지막 업데이트',
+      availability: '가동률',
+      monthly: '월간',
+      uptime: '가동 시간',
+      startTime: '시작',
+      downTime: '다운타임',
+      lastRestart: '마지막 재시작',
+      runningTime: '가동 시간',
     },
   },
   notification: {

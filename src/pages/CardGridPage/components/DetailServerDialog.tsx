@@ -52,12 +52,44 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
   useEffect(() => {
     console.log('DetailServerDialog 마운트됨:', server);
     console.log('프로세스 정보:', server.processes);
+    console.log('서버 시간 정보:', {
+      upTime: server.upTime,
+      downTime: server.downTime,
+      status: server.status
+    });
   }, [server]);
 
   const getProgressColor = (value: number) => {
     if (value >= 80) return '#EF4444'; // red-500
     if (value >= 60) return '#F59E0B'; // amber-500
     return '#10B981'; // emerald-500
+  };
+
+  const formatTime = (minutes: number) => {
+    const days = Math.floor(minutes / (24 * 60));
+    const hours = Math.floor((minutes % (24 * 60)) / 60);
+    const mins = minutes % 60;
+    
+    if (days > 0) {
+      return `${days}일 ${hours}시간 ${mins}분`;
+    } else if (hours > 0) {
+      return `${hours}시간 ${mins}분`;
+    } else {
+      return `${mins}분`;
+    }
+  };
+
+  const formatDateTime = (date: Date | string | number) => {
+    const d = new Date(date);
+    return d.toLocaleString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
   };
 
   const closeDialog = () => {
@@ -124,101 +156,44 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
           {/* 상태 정보 */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.status')}</h3>
-            <div className="flex items-center space-x-2 mb-2">
-              <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className="text-gray-700">
-                {getString(`server.status.${server.status}`)}
-              </span>
-            </div>
-          </div>
-
-          {/* 리소스 사용량 */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4">{getString('server.detail.resources')}</h3>
-            <div className="grid grid-cols-5 gap-4">
-              {/* CPU */}
-              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-20 h-20 mb-2">
-                  <CircularProgressbar
-                    value={server.cpu || 0}
-                    text={`${server.cpu || 0}%`}
-                    styles={buildStyles({
-                      pathColor: getProgressColor(server.cpu || 0),
-                      textColor: '#374151',
-                      textSize: '20px',
-                      trailColor: '#E5E7EB',
-                    })}
-                  />
+            <div className="grid grid-cols-4 gap-4">
+              {/* 서버 상태 카드 */}
+              <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm font-medium text-gray-600">{getString('server.detail.status')}</div>
+                  <div className={`w-2 h-2 rounded-full ${server.status === 'connected' ? 'bg-emerald-500' : 'bg-red-500'}`} />
                 </div>
-                <div className="text-sm text-gray-500">{getString('server.resources.cpu')}</div>
+                <div className="text-xl font-medium text-gray-900 mb-1">{getString(`server.status.${server.status}`)}</div>
+                <div className="text-xs text-gray-400">{getString('server.detail.lastUpdate')}: {new Date(server.lastUpdate).toLocaleString()}</div>
               </div>
 
-              {/* RAM */}
-              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-20 h-20 mb-2">
-                  <CircularProgressbar
-                    value={server.ram || 0}
-                    text={`${server.ram || 0}%`}                    
-                    styles={buildStyles({
-                      pathColor: getProgressColor(server.ram ? (server.ram / 1024) * 10 : 0),
-                      textColor: '#374151',
-                      textSize: '20px',
-                      trailColor: '#E5E7EB',
-                    })}
-                  />
+              {/* 가동률 카드 */}
+              <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-sm font-medium text-gray-600 mb-3">{getString('server.detail.availability')}</div>
+                <div className="flex items-end space-x-2 mb-2">
+                  <div className="text-xl font-medium text-gray-900">{server.availability?.toFixed(1) || 0}%</div>
+                  <div className="text-xs text-gray-400 mb-1">{getString('server.detail.monthly')}</div>
                 </div>
-                <div className="text-sm text-gray-500">{getString('server.resources.ram')}</div>
+                <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-500" 
+                    style={{ width: `${server.availability || 0}%` }}
+                  ></div>
+                </div>
               </div>
 
-              {/* Disk */}
-              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-20 h-20 mb-2">
-                  <CircularProgressbar
-                    value={server.disk || 0}
-                    text={`${server.disk || 0}%`}                    
-                    styles={buildStyles({
-                      pathColor: getProgressColor(server.disk || 0),
-                      textColor: '#374151',
-                      textSize: '20px',
-                      trailColor: '#E5E7EB',
-                    })}
-                  />
-                </div>
-                <div className="text-sm text-gray-500">{getString('server.resources.disk')}</div>
+              {/* 가동 시간 카드 */}
+              <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-sm font-medium text-gray-600 mb-3">{getString('server.detail.uptime')}</div>
+                <div className="text-xl font-medium text-gray-900 mb-1">{formatTime(server.upTime || 0)}</div>
+                <div className="text-xs text-gray-400">{getString('server.detail.startTime')}: {server.startTime ? new Date(server.startTime).toLocaleString() : '-'}</div>
               </div>
 
-              {/* GPU */}
-              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-20 h-20 mb-2">
-                  <CircularProgressbar
-                    value={server.gpu || 0}
-                    text={`${server.gpu || 0}%`}                    
-                    styles={buildStyles({
-                      pathColor: getProgressColor(server.gpu || 0),
-                      textColor: '#374151',
-                      textSize: '20px',
-                      trailColor: '#E5E7EB',
-                    })}
-                  />
-                </div>
-                <div className="text-sm text-gray-500">{getString('server.resources.gpu')}</div>
-              </div>
-
-              {/* Network */}
-              <div className="p-3 bg-gray-50 rounded-lg flex flex-col items-center">
-                <div className="w-20 h-20 mb-2">
-                  <CircularProgressbar
-                    value={server.network || 0}
-                    text={`${server.network || 0}%`}                    
-                    styles={buildStyles({
-                      pathColor: getProgressColor(server.network || 0),
-                      textColor: '#374151',
-                      textSize: '20px',
-                      trailColor: '#E5E7EB',
-                    })}
-                  />
-                </div>
-                <div className="text-sm text-gray-500">{getString('server.resources.network')}</div>
+              {/* 다운타임 카드 */}
+              <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="text-sm font-medium text-gray-600 mb-3">{getString('server.detail.downTime')}</div>
+                <div className="text-xl font-medium text-gray-900 mb-1">{formatTime(server.downTime || 0)}</div>
+                <div className="text-xs text-gray-400">{getString('server.detail.lastRestart')}: {server.lastRestart ? new Date(server.lastRestart).toLocaleString() : '-'}</div>
               </div>
             </div>
           </div>
@@ -226,41 +201,58 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
           {/* 프로세스 목록 */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.processes')}</h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {server.processes
                 .sort((a, b) => {
                   if (a.name === 'RSS') return -1;
                   if (b.name === 'RSS') return 1;
                   if (a.name === 'SCI') return -1;
                   if (b.name === 'SCI') return 1;
-
                   return a.name.localeCompare(b.name);
                 })
                 .map((process, index) => (
-                <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full ${process.status === 'running' ? 'bg-green-500' : 'bg-gray-300'}`} />
-                    <div className="flex items-center space-x-2">
-                      <span className="text-gray-700">{process.name}</span>
-                      <span className="text-xs text-gray-500">{process.version || '버전 없음'}</span>
+                <div key={`${server.id}-${process.name}-${index}`} 
+                  className={`rounded-lg p-4 group transition-all duration-200 ${
+                    process.status === 'running' 
+                      ? 'bg-white border border-emerald-100 hover:border-emerald-200' 
+                      : 'bg-white border border-gray-100 hover:border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3">
+                      <div className={`w-1.5 h-1.5 rounded-full mt-2 ${process.status === 'running' ? 'bg-emerald-500' : 'bg-gray-300'}`} />
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`font-medium ${process.status === 'running' ? 'text-gray-900' : 'text-gray-600'}`}>
+                            {process.name}
+                          </span>
+                          <span className="text-xs text-gray-400">{process.version || '버전 없음'}</span>
+                        </div>
+                        {process.status === 'running' && (
+                          <div className="mt-1">
+                            <div className="text-xs text-gray-500">{getString('server.detail.runningTime')}: {formatTime(Number(process.runningTime) || 0)}</div>
+                            <div className="text-xs text-gray-400">{getString('server.detail.startTime')}: {process.startTime ? new Date(process.startTime).toLocaleString() : '-'}</div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => saveConfig(process.name)}
-                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-blue-500 transition-all"
-                  >
-                    <img src={IMAGES.save} alt="저장" className="w-4 h-4" />
-                  </button>
-                    <button
-                      onClick={() => handleDeleteProcess(process.name)}
-                      className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all"
-                    >
-                      <img src={IMAGES.close} alt="삭제" className="w-4 h-4" />
-                    </button>
-                    <span className="text-sm text-gray-500">
-                      {getString(`server.process.${process.status}`)}
-                    </span>
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={() => saveConfig(process.name)}
+                        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all"
+                      >
+                        <img src={IMAGES.save} alt="저장" className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProcess(process.name)}
+                        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all"
+                      >
+                        <img src={IMAGES.close} alt="삭제" className="w-4 h-4" />
+                      </button>
+                      <span className={`text-xs font-medium ${process.status === 'running' ? 'text-emerald-600' : 'text-gray-400'}`}>
+                        {getString(`server.process.${process.status}`)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
