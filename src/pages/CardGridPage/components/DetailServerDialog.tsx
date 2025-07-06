@@ -186,14 +186,19 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className="text-sm font-medium text-gray-600 mb-3">{getString('server.detail.uptime')}</div>
                 <div className="text-xl font-medium text-gray-900 mb-1">{formatTime(server.upTime || 0)}</div>
-                <div className="text-xs text-gray-400">{getString('server.detail.startTime')}: {server.startTime ? new Date(server.startTime).toLocaleString() : '-'}</div>
+                <div className="text-xs text-gray-400">{getString('server.detail.startTime')} : {server.startTime ? new Date(server.startTime).toLocaleString() : '-'}</div>
               </div>
 
               {/* 다운타임 카드 */}
               <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className="text-sm font-medium text-gray-600 mb-3">{getString('server.detail.downTime')}</div>
                 <div className="text-xl font-medium text-gray-900 mb-1">{formatTime(server.downTime || 0)}</div>
-                <div className="text-xs text-gray-400">{getString('server.detail.lastRestart')}: {server.lastRestart ? new Date(server.lastRestart).toLocaleString() : '-'}</div>
+                <div className="text-xs text-gray-400 space-y-1">
+                  <div>{getString('server.detail.lastRestart')}: {server.lastRestart ? formatDateTime(server.lastRestart) : '-'}</div>
+                  {server.status === 'disconnected' && (
+                    <div>{getString('server.detail.disconnectedTime')} : {formatDateTime(server.lastUpdate)}</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -232,6 +237,11 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
                           <div className="mt-1">
                             <div className="text-xs text-gray-500">{getString('server.detail.runningTime')}: {formatTime(Number(process.runningTime) || 0)}</div>
                             <div className="text-xs text-gray-400">{getString('server.detail.startTime')}: {process.startTime ? new Date(process.startTime).toLocaleString() : '-'}</div>
+                          </div>
+                        )}
+                        {process.status === 'stopped' && process.lastUpdate && (
+                          <div className="mt-1">
+                            <div className="text-xs text-gray-400">{getString('server.detail.disconnectedTime')} : {formatDateTime(process.lastUpdate)}</div>
                           </div>
                         )}
                       </div>

@@ -38,6 +38,7 @@ export const STRINGS = {
       downTime: '다운타임',
       lastRestart: '마지막 재시작',
       runningTime: '가동 시간',
+      disconnectedTime: '끊긴 시각',
     },
   },
   notification: {
