@@ -1,10 +1,20 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { ServerStatus } from '../types/server';
-import { serverApi } from '../services/api';
+import { serverApi, contaminationApi } from '../services/api';
 import { socketService } from '../services/socket';
+
+interface ContaminationImage {
+  serverCode: string;
+  status: string;
+  bucket: string;
+  date: string;
+  images: string[];
+  detail?: any;
+}
 
 interface ServerContextType {
   servers: ServerStatus[];
+  contaminationImages: ContaminationImage[];
   setServers: React.Dispatch<React.SetStateAction<ServerStatus[]>>;
   addServer: (newServer: ServerStatus) => void;
   refreshServers: () => Promise<void>;
@@ -12,6 +22,7 @@ interface ServerContextType {
 
 const defaultContextValue: ServerContextType = {
   servers: [],
+  contaminationImages: [],
   setServers: () => {},
   addServer: () => {},
   refreshServers: async () => {}
@@ -21,80 +32,118 @@ const ServerContext = createContext<ServerContextType>(defaultContextValue);
 
 export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [servers, setServers] = useState<ServerStatus[]>([]);
+  const [contaminationImages, setContaminationImages] = useState<ContaminationImage[]>([]);
 
-  const refreshServers = async () => {
+  const refreshServers = useCallback(async () => {
     try {
-      const data = await serverApi.getAllData();
-      if (!Array.isArray(data)) {
-        console.error('Invalid server data received:', data);
-        setServers([]);
-        return;
-      }
-      const updatedData = data.map(server => ({
-        ...server,
-        status: server.status || 'disconnected',
-        cpuHistory: server.cpuHistory || [],
-        ramHistory: server.ramHistory || [],
-        processes: server.processes || [],
-        upTime: server.upTime || 0,
-        downTime: server.downTime || 0
-      }));
-      setServers(updatedData);
+      const response = await serverApi.getAllData();
+      setServers(response);
     } catch (error) {
-      console.error('서버 데이터 불러오기 실패', error);
-      setServers([]);
+      console.error('서버 목록 조회 실패:', error);
     }
-  };
+  }, []);
+
+  const refreshContaminationData = useCallback(async () => {
+    try {
+        const response = await contaminationApi.getAll();
+      
+      const dataArray: any[] = response && typeof response === 'object' && 'data' in response 
+        ? (response as any).data 
+        : Array.isArray(response) ? response : [];
+      
+      const mappedImages = dataArray.map((item: any) => ({
+        ...item,
+        serverCode: item.serverCode,
+        detail: null,
+      }));
+      
+      const allContaminationData = [...mappedImages];
+      
+      for (const server of servers) {
+        const serverCode = server.code;
+        
+        const today = new Date();
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(today);
+          date.setDate(date.getDate() - i);
+          
+          const year = date.getFullYear().toString().slice(-2);
+          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const day = date.getDate().toString().padStart(2, '0');
+          const dateStr = `${year}${month}${day}`;
+          
+          for (const status of ['warning', 'critical']) {
+            const existingData = allContaminationData.find(
+              data => data.serverCode === serverCode && 
+                     data.date === dateStr && 
+                     data.status === status
+            );
+            
+            if (!existingData) {
+              allContaminationData.push({
+                serverCode: serverCode,
+                status: status,
+                bucket: 'alert',
+                date: dateStr,
+                images: [],
+                detail: null
+              });
+            }
+          }
+        }
+      }
+      
+      setContaminationImages(allContaminationData);
+    } catch (error) {
+      console.error('오염도 데이터 조회 실패:', error);
+      setContaminationImages([]);
+    }
+  }, []);
 
   useEffect(() => {
     refreshServers();
+    refreshContaminationData();
+  }, [refreshServers, refreshContaminationData]);
 
-    socketService.connect();
-    
-    socketService.onServerStats((updatedServers) => {
-      if (!Array.isArray(updatedServers)) {
-        return;
-      }
+  useEffect(() => {
+    if (!socketService) return;
 
-      setServers(prevServers => {
-        const updatedMap = new Map(updatedServers.map(s => [s.code, s]));
-    
-        return prevServers.map(server => {
-          const updated = updatedMap.get(server.code);
-          if (updated) {
-            const newServer = {
-              ...server,
-              ...updated,
-              cpuHistory: updated.cpuHistory || server.cpuHistory || [],
-              ramHistory: updated.ramHistory || server.ramHistory || [],
-              gpuHistory: updated.gpuHistory || server.gpuHistory || [],
-              networkHistory: updated.networkHistory || server.networkHistory || [],
-              processes: updated.processes || [],
-              status: updated.status as 'connected' | 'disconnected' | 'warning',
-              upTime: updated.upTime,
-              downTime: updated.downTime
-            };
-            
-            return newServer;
-          }
-    
-          return {
-            ...server,
-            status: 'disconnected' as const,
-            processes: (server.processes || []).map(p => ({
-              ...p,
-              status: 'stopped' as const,
-            })),
-          };
-        });
+    const handleContaminationImages = (data: any) => {
+      setContaminationImages(prevImages => {
+        const newImage = {
+          serverCode: data.serverCode,
+          status: data.status,
+          bucket: data.bucket,
+          date: data.date,
+          images: data.images,
+          detail: null,
+        };
+
+        const existingIndex = prevImages.findIndex(
+          img => img.serverCode === data.serverCode && 
+                 img.bucket === data.bucket && 
+                 img.date === data.date && 
+                 img.status === data.status
+        );
+
+        if (existingIndex !== -1) {
+          const updatedImages = [...prevImages];
+          updatedImages[existingIndex] = newImage;
+          return updatedImages;
+        } else {
+          return [...prevImages, newImage];
+        }
       });
-    });
-    
-    return () => {
-      socketService.offServerStats(() => {});
-      socketService.disconnect();
     };
-  }, []);
+
+    socketService.onContaminationImages(handleContaminationImages);
+
+    return () => {
+      if (socketService) {
+        socketService.offContaminationImages(handleContaminationImages);
+      }
+    };
+  }, [socketService]);
 
   const addServer = (newServer: ServerStatus) => {
     const serverWithStatus = {
@@ -108,7 +157,7 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   return (
-    <ServerContext.Provider value={{ servers, setServers, addServer, refreshServers }}>
+    <ServerContext.Provider value={{ servers, contaminationImages, setServers, addServer, refreshServers }}>
       {children}
     </ServerContext.Provider>
   );

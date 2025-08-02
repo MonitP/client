@@ -74,3 +74,16 @@ export const mailApi = {
   },
   delete: (id: number) => api.delete(`${API_URLS.mail.base}/${id}`),
 };
+
+export const contaminationApi = {
+  getAll: async () => {
+    const res = await api.get<{ success: boolean; data: any[] }>(
+      `${API_URLS.servers.base}/contamination`
+    );
+    return res.data;
+  },
+  getByServer: (serverCode: string) => 
+    api.get<{ success: boolean; data: any[] }>(
+      `${API_URLS.servers.base}/contamination/${serverCode}`
+    ),
+};

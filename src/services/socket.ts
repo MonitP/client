@@ -84,6 +84,29 @@ class SocketService {
     }
   }
 
+  onContaminationImages(callback: (data: {
+    serverCode: string;
+    status: string;
+    bucket: string;
+    date: string;
+    images: string[];
+  }) => void) {
+    if (!this.socket) {
+      this.connect();
+    }
+    this.socket?.on('contamination-images', callback);
+  }
+
+  offContaminationImages(callback: (data: {
+    serverCode: string;
+    status: string;
+    bucket: string;
+    date: string;
+    images: string[];
+  }) => void) {
+    this.socket?.off('contamination-images', callback);
+  }
+
   on(event: string, callback: (...args: any[]) => void) {
     if (!this.socket) {
       this.connect();

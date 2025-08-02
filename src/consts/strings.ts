@@ -260,16 +260,63 @@ export const STRINGS = {
     mail: '메일',
     log: '로그',
   },
+  contamination: {
+    page: {
+      title: '오염도 알림',
+    },
+    server: {
+      title: '서버 선택',
+      allServers: '전체 서버',
+    },
+    status: {
+      title: '상태 선택',
+      allStatus: '전체 상태',
+      warning: '경고',
+      critical: '심각',
+    },
+    date: {
+      title: '날짜 선택',
+      allDates: '전체 날짜',
+    },
+    gallery: {
+      title: '스톨 이미지',
+      noData: {
+        withServer: '{server} 서버의 오염도 데이터가 없습니다.',
+        noServer: '선택된 조건에 맞는 오염도 데이터가 없습니다.',
+        description: '오염도 이벤트가 발생하면 이미지가 표시됩니다.',
+      },
+      loadError: '이미지 로드 실패',
+    },
+    detail: {
+      title: '오염도 상세 정보',
+      noData: '오염도 상세 정보가 없습니다.',
+      line: '라인',
+      stall: '스톨',
+      count: '개',
+    },
+    stats: {
+      title: '통계 정보',
+      selectedServer: '선택된 서버',
+      status: '상태',
+      allServers: '전체 서버',
+      contaminationData: '오염도 데이터',
+      totalImages: '총 이미지',
+      unit: {
+        servers: '개',
+        images: '개',
+      },
+    },
+  },
 } as const;
 
 type NestedKeyOf<T> = T extends object
   ? {
-      [K in keyof T]: K extends string
-        ? T[K] extends object
-          ? `${K}.${NestedKeyOf<T[K]>}`
-          : K
-        : never;
-    }[keyof T]
+    [K in keyof T]: K extends string
+    ? T[K] extends object
+    ? `${K}.${NestedKeyOf<T[K]>}`
+    : K
+    : never;
+  }[keyof T]
   : never;
 
 export type StringKey = NestedKeyOf<typeof STRINGS> | string;
