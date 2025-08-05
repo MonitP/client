@@ -153,7 +153,7 @@ const HomePage: React.FC = () => {
                 server.gpu > 80 ||
                 server.network > 80)
               .map(server => (
-                <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
+                <div key={`issues-${server.id}`} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
                     <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
                     <div className="min-w-[150px]">
@@ -207,7 +207,7 @@ const HomePage: React.FC = () => {
                  (server.gpu > 60 && server.gpu <= 80) ||
                  (server.network > 60 && server.network <= 80)))
               .map(server => (
-                <div key={server.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
+                <div key={`warnings-${server.id}`} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
                     <div className="min-w-[150px]">
@@ -256,7 +256,7 @@ const HomePage: React.FC = () => {
             {servers
               .filter(server => server.processes?.some(p => p.status === 'stopped'))
               .map(server => (
-                <div key={server.id} className="flex flex-col p-4 rounded-lg border border-gray-200">
+                <div key={`${server.id}`} className="flex flex-col p-4 rounded-lg border border-gray-200">
                   <div className="flex items-center space-x-4 mb-2">
                     <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
                     <h4 className="font-medium text-gray-800">{server.name}</h4>
@@ -264,8 +264,8 @@ const HomePage: React.FC = () => {
                   <div className="pl-7 space-y-2">
                     {server.processes
                       ?.filter(p => p.status === 'stopped')
-                      .map(process => (
-                        <div key={process.name} className="flex items-center justify-between text-sm">
+                      .map((process, index) => (
+                        <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between text-sm">
                           <div className="flex items-center space-x-2">
                             <span className="text-red-500">❌</span>
                             <span className="text-gray-700">{process.name}</span>

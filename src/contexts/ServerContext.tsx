@@ -108,6 +108,22 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     if (!socketService) return;
 
+    const handleServerStats = (data: ServerStatus[]) => {
+      setServers(data);
+    };
+
+    socketService.onServerStats(handleServerStats);
+
+    return () => {
+      if (socketService) {
+        socketService.offServerStats(handleServerStats);
+      }
+    };
+  }, [socketService]);
+
+  useEffect(() => {
+    if (!socketService) return;
+
     const handleContaminationImages = (data: any) => {
       setContaminationImages(prevImages => {
         const newImage = {
