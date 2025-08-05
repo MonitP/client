@@ -12,4 +12,9 @@ export const API_URLS = {
   logs: {
     base: '/api/logs',
   },
+  minio: {
+    base: '/api/server/minio',
+    listBuckets: '/buckets',
+    listObjects: '/objects',
+  },
 } as const; 

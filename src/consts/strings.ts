@@ -278,14 +278,21 @@ export const STRINGS = {
       title: '날짜 선택',
       allDates: '전체 날짜',
     },
+    line: {
+      title: '라인 선택',
+      allLines: '전체 라인',
+    },
     gallery: {
       title: '스톨 이미지',
+      searchPlaceholder: '스톨 번호 검색',
       noData: {
         withServer: '{server} 서버의 오염도 데이터가 없습니다.',
         noServer: '선택된 조건에 맞는 오염도 데이터가 없습니다.',
         description: '오염도 이벤트가 발생하면 이미지가 표시됩니다.',
       },
       loadError: '이미지 로드 실패',
+      noSearchResults: '검색 결과가 없습니다.',
+      noImages: '표시할 이미지가 없습니다.',
     },
     detail: {
       title: '오염도 상세 정보',
@@ -305,6 +312,24 @@ export const STRINGS = {
         servers: '개',
         images: '개',
       },
+    },
+    modal: {
+      title: '이미지 정보',
+      serverCode: '서버 코드',
+      status: '상태',
+      date: '날짜',
+      sid: 'SID',
+      stallId: '스톨 ID',
+      count: '카운트',
+      imageFileName: '이미지 파일명',
+      loading: '이미지 로딩 중...',
+    },
+    image: {
+      loading: '로딩 중...',
+      sid: 'SID',
+      stall: '스톨',
+      occurrenceCount: '발생 횟수',
+      contaminationLevel: '오염도',
     },
   },
 } as const;
