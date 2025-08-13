@@ -47,18 +47,33 @@ const ContaminationPage: React.FC = () => {
   }).replace(/\. /g, '').replace('.', '');
 
 
-  const getServersWithTodayData = () => {
+  const getServersWithRecentData = () => {
     const todayServers = new Set<string>();
+    const weekServers = new Set<string>();
+    
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const oneWeekAgoStr = oneWeekAgo.toLocaleDateString('ko-KR', { 
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\. /g, '').replace('.', '');
+    
     contaminationData.forEach(item => {
+      const serverCodeWithSuffix = item.serverCode + '-00';
+      
       if (item.date === today) {
-        const serverCodeWithSuffix = item.serverCode + '-00';
         todayServers.add(serverCodeWithSuffix);
+      } else if (item.date >= oneWeekAgoStr && item.date < today) {
+        weekServers.add(serverCodeWithSuffix);
       }
     });
-    return todayServers;
+    
+    return { todayServers, weekServers };
   };
 
-  const serversWithTodayData = getServersWithTodayData();
+  const { todayServers, weekServers } = getServersWithRecentData();
 
   const loadMinioData = async () => {
     try {
@@ -492,10 +507,8 @@ const ContaminationPage: React.FC = () => {
           <h3 className="font-semibold mb-4">{getString('contamination.server.title')}</h3>
           <div className="flex flex-wrap gap-2">
             {servers.map(server => {
-              const hasTodayData = contaminationData.some(item => 
-                item.serverCode === server.code.replace(/-00$/, '') && 
-                item.date === today
-              );
+              const hasTodayData = todayServers.has(server.code);
+              const hasWeekData = weekServers.has(server.code);
               
               return (
                 <button
@@ -505,12 +518,17 @@ const ContaminationPage: React.FC = () => {
                     selectedServer === server.code
                       ? 'bg-blue-500 text-white'
                       : hasTodayData
-                        ? 'bg-orange-200 text-orange-800 border-2 border-orange-400'
-                        : 'bg-gray-200 text-gray-700'
+                        ? 'bg-red-200 text-red-800 border-2 border-red-400'
+                        : hasWeekData
+                          ? 'bg-orange-200 text-orange-800 border-2 border-orange-400'
+                          : 'bg-gray-200 text-gray-700'
                   }`}
                 >
                   <span>{server.code}</span>
                   {hasTodayData && (
+                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                  )}
+                  {hasWeekData && !hasTodayData && (
                     <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                   )}
                 </button>
