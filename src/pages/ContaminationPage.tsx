@@ -460,7 +460,14 @@ const ContaminationPage: React.FC = () => {
               <div>
                 <label className="text-sm font-medium text-gray-600 block mb-1">{getString('contamination.modal.count')}</label>
                 <div className="text-lg font-semibold text-gray-800">
-                  {selectedImage.count} / {selectedImage.max}
+                  {selectedImage.count}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-600 block mb-1">{getString('contamination.modal.maxContimination')}</label>
+                <div className="text-lg font-semibold text-gray-800">
+                  {selectedImage.max}%
                 </div>
               </div>
               
