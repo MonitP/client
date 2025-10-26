@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { getString } from '../../../consts/strings';
 import { ServerStatus } from '../../../types/server';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
@@ -16,6 +16,7 @@ import {
   Legend,
 } from 'chart.js';
 import { IMAGES } from '../../../consts/images';
+import { serverApi } from '../../../services/api';
 
 ChartJS.register(
   CategoryScale,
@@ -31,10 +32,28 @@ interface DetailServerDialogProps {
   server: ServerStatus;
   onClose: () => void;
   onDeleteProcess?: (processName: string) => void;
+  onServerUpdated?: () => void;
 }
 
-const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose, onDeleteProcess }) => {
+const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose, onDeleteProcess, onServerUpdated }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [showNoServer, setShowNoServer] = useState(server.isNoServer || false);
+
+  const handleNoServerChange = async (checked: boolean) => {
+    setShowNoServer(checked);
+    
+    try {
+      await serverApi.updateNoServerStatus(server.id, checked);
+      console.log('서버 없음 상태 업데이트 성공:', checked);
+      
+      if (onServerUpdated) {
+        onServerUpdated();
+      }
+    } catch (error) {
+      console.error('서버 없음 상태 업데이트 실패:', error);
+      setShowNoServer(!checked);
+    }
+  };
 
   useEffect(() => {
     const outsideClick = (event: MouseEvent) => {
@@ -48,6 +67,11 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
       document.removeEventListener('mousedown', outsideClick);
     };
   }, [onClose]);
+
+  // 서버 데이터가 변경될 때마다 체크박스 상태 업데이트
+  useEffect(() => {
+    setShowNoServer(server.isNoServer || false);
+  }, [server.isNoServer]);
 
   useEffect(() => {
     console.log('DetailServerDialog 마운트됨:', server);
@@ -132,6 +156,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
     }
   };
 
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div ref={dialogRef} className="bg-white rounded-lg w-[1200px] max-h-[80vh] overflow-y-auto">
@@ -142,28 +167,44 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               <h2 className="text-2xl font-semibold text-gray-800">{server.name}</h2>
               <span className="text-sm text-gray-500">{server.ip}</span>
             </div>
-            <button 
-              onClick={closeDialog}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <img src={IMAGES.close} alt="닫기" className="w-6 h-6" />
-            </button>
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center space-x-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={showNoServer}
+                  onChange={(e) => handleNoServerChange(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span>서버 없음</span>
+              </label>
+              <button 
+                onClick={closeDialog}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <img src={IMAGES.close} alt="닫기" className="w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
 
         {/* 다이얼로그 컨텐츠 */}
         <div className="p-6">
           {/* 상태 정보 */}
-          <div className="mb-6">
+          {!showNoServer && (
+            <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.status')}</h3>
             <div className="grid grid-cols-4 gap-4">
               {/* 서버 상태 카드 */}
               <div className="bg-white rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-sm font-medium text-gray-600">{getString('server.detail.status')}</div>
-                  <div className={`w-2 h-2 rounded-full ${server.status === 'connected' ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                  <div className={`w-2 h-2 rounded-full ${
+                    showNoServer ? 'bg-gray-400' : (server.status === 'connected' ? 'bg-emerald-500' : 'bg-red-500')
+                  }`} />
                 </div>
-                <div className="text-xl font-medium text-gray-900 mb-1">{getString(`server.status.${server.status}`)}</div>
+                <div className="text-xl font-medium text-gray-900 mb-1">
+                  {showNoServer ? '서버 없음' : getString(`server.status.${server.status}`)}
+                </div>
                 <div className="text-xs text-gray-400">{getString('server.detail.lastUpdate')}: {new Date(server.lastUpdate).toLocaleString()}</div>
               </div>
 
@@ -202,6 +243,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               </div>
             </div>
           </div>
+          )}
 
           {/* 프로세스 목록 */}
           <div className="mb-6">
@@ -270,6 +312,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
           </div>
 
           {/* 리소스 사용량 추이 */}
+          {!showNoServer && (
           <div>
             <h3 className="text-lg font-semibold mb-4">{getString('server.detail.history.title')}</h3>
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -328,6 +371,7 @@ const DetailServerDialog: React.FC<DetailServerDialogProps> = ({ server, onClose
               />
             </div>
           </div>
+          )}
         </div>
       </div>
     </div>

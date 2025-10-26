@@ -170,6 +170,8 @@ export const serverApi = {
   },
   delete: (id: string) => api.delete(`${API_URLS.servers.base}/${id}`),
   update: (id: string, data: unknown) => api.put(`${API_URLS.servers.base}/${id}`, data),
+  updateNoServerStatus: (id: string, isNoServer: boolean) => 
+    api.put(`${API_URLS.servers.base}/${id}/no-server`, { isNoServer }),
   deleteProcess: (code: string, processName: string) =>
     api.delete(`${API_URLS.servers.base}/${code}/processes/${processName}`),
 };

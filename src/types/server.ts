@@ -33,6 +33,7 @@ export interface ServerStatus {
   lastChecked?: string;
   startTime?: string;
   lastRestart?: string;
+  isNoServer?: boolean;
 }
 
 export interface Server {

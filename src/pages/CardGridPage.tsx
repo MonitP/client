@@ -15,6 +15,15 @@ const CardGridPage: React.FC = () => {
 
   const selectedServer = servers.find((s) => s?.id?.toString() === selectedServerId);
 
+  const refreshServers = async () => {
+    try {
+      const updatedServers = await serverApi.getAllData();
+      setServers(updatedServers);
+    } catch (error) {
+      console.error('서버 목록 새로고침 실패:', error);
+    }
+  };
+
   useEffect(() => {
     socketService.onServerStats((updatedServers) => {
       setServers(prevServers => {
@@ -31,7 +40,8 @@ const CardGridPage: React.FC = () => {
               processes: updated.processes || server.processes,
               status: updated.status as 'connected' | 'disconnected' | 'warning',
               upTime: updated.upTime || server.upTime,
-              downTime: updated.downTime || server.downTime
+              downTime: updated.downTime || server.downTime,
+              isNoServer: server.isNoServer // isNoServer 상태만 보존
             };
           }
 
@@ -94,7 +104,15 @@ const CardGridPage: React.FC = () => {
       </h2>
 
       <div className="w-full max-w-[95vw] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {servers.map((server) => (
+        {servers.length === 0 ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-16 bg-white rounded-lg shadow-sm border border-gray-100">
+            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+              <div className="w-8 h-8 bg-gray-400 rounded-full"></div>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">서버 없음</h3>
+            <p className="text-sm text-gray-500">등록된 서버가 없습니다</p>
+          </div>
+        ) : servers.map((server) => (
           <div
             key={server.id}
             className="bg-white rounded-lg shadow-sm border border-gray-100 relative group hover:shadow-md transition-shadow duration-200"
@@ -112,9 +130,16 @@ const CardGridPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800">{server.name}</h3>
                 <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
+                  <div className={`w-2 h-2 rounded-full ${
+                    server.isNoServer 
+                      ? 'bg-gray-400' 
+                      : (server.status === 'connected' ? 'bg-green-500' : 'bg-red-500')
+                  }`} />
                   <span className="text-sm text-gray-500">
-                    {getString(`server.status.${server.status}`)}
+                    {server.isNoServer 
+                      ? '서버 없음' 
+                      : getString(`server.status.${server.status}`)
+                    }
                   </span>
                 </div>
               </div>
@@ -153,7 +178,7 @@ const CardGridPage: React.FC = () => {
 
             <div className="p-4 space-y-3">
               {server.processes
-                .filter(process => process.name === 'RSS' || process.name === 'SCI' || process.name === 'AI-SERVER')
+                .filter(process => process.name === 'RSS' || process.name === 'SCI' || process.name === 'AI-SERVER' || process.name.includes('DeepFeed'))
                 .map((process, index) => (
                   <div key={`${server.id}-${process.name}-${index}`} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -175,6 +200,7 @@ const CardGridPage: React.FC = () => {
           server={selectedServer}
           onClose={closeDialog}
           onDeleteProcess={deleteProcess}
+          onServerUpdated={refreshServers}
         />
       )}
     </div>

@@ -57,7 +57,9 @@ const ServerListPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 w-full">
               <div className={`w-3 h-3 rounded-full ${
-                server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'
+                server.isNoServer 
+                  ? 'bg-gray-400' 
+                  : (server.status === 'connected' ? 'bg-green-500' : 'bg-red-500')
               }`} />
               <div className="flex items-center w-full">
                 <div className="w-1/4 px-4">

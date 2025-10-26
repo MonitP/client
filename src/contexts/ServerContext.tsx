@@ -33,10 +33,26 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   useEffect(() => {
+    refreshServers();
+    
     if (!socketService) return;
 
     const handleServerStats = (data: ServerStatus[]) => {
-      setServers(data);
+      setServers(prevServers => {
+        const updatedMap = new Map(data.map(s => [s.code, s]));
+        
+        return prevServers.map(server => {
+          const updated = updatedMap.get(server.code);
+          if (updated) {
+            return {
+              ...server,
+              ...updated,
+              isNoServer: server.isNoServer // isNoServer 상태만 보존
+            };
+          }
+          return server;
+        });
+      });
     };
 
     socketService.onServerStats(handleServerStats);
@@ -46,7 +62,7 @@ export const ServerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         socketService.offServerStats(handleServerStats);
       }
     };
-  }, [socketService]);
+  }, [socketService, refreshServers]);
 
   const addServer = (newServer: ServerStatus) => {
     const serverWithStatus = {

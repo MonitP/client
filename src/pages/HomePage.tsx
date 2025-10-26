@@ -9,27 +9,29 @@ import { useServers } from '../contexts/ServerContext';
 const HomePage: React.FC = () => {
   const { servers } = useServers();
 
+  const activeServers = servers.filter(s => !s.isNoServer);
+  
   const stats = {
-    total: servers.length,
-    connected: servers.filter(s => s.status === 'connected').length,
-    disconnected: servers.filter(s => s.status === 'disconnected').length,
-    avgCpu: servers.filter(s => s.status === 'connected').length > 0 
-      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.cpu || 0), 0) / servers.filter(s => s.status === 'connected').length 
+    total: activeServers.length,
+    connected: activeServers.filter(s => s.status === 'connected').length,
+    disconnected: activeServers.filter(s => s.status === 'disconnected').length,
+    avgCpu: activeServers.filter(s => s.status === 'connected').length > 0 
+      ? activeServers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.cpu || 0), 0) / activeServers.filter(s => s.status === 'connected').length 
       : 0,
-    avgRAM: servers.filter(s => s.status === 'connected').length > 0 
-      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.ram || 0), 0) / servers.filter(s => s.status === 'connected').length 
+    avgRAM: activeServers.filter(s => s.status === 'connected').length > 0 
+      ? activeServers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.ram || 0), 0) / activeServers.filter(s => s.status === 'connected').length 
       : 0,
-    avgGpu: servers.filter(s => s.status === 'connected').length > 0 
-      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.gpu || 0), 0) / servers.filter(s => s.status === 'connected').length 
+    avgGpu: activeServers.filter(s => s.status === 'connected').length > 0 
+      ? activeServers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.gpu || 0), 0) / activeServers.filter(s => s.status === 'connected').length 
       : 0,
-    avgNetwork: servers.filter(s => s.status === 'connected').length > 0 
-      ? servers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.network || 0), 0) / servers.filter(s => s.status === 'connected').length 
+    avgNetwork: activeServers.filter(s => s.status === 'connected').length > 0 
+      ? activeServers.filter(s => s.status === 'connected').reduce((acc, s) => acc + (s.network || 0), 0) / activeServers.filter(s => s.status === 'connected').length 
       : 0,
-    totalProcesses: servers.length > 0
-      ? servers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
+    totalProcesses: activeServers.length > 0
+      ? activeServers.reduce((acc, s) => acc + (s.processes?.length ?? 0), 0)
       : 0,
-    runningProcesses: servers.length > 0
-      ? servers.reduce(
+    runningProcesses: activeServers.length > 0
+      ? activeServers.reduce(
           (acc, s) => acc + (s.processes?.filter(p => p.status === 'running').length ?? 0),
           0
         )
@@ -142,16 +144,17 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* 최근 문제 발생 서버 */}
+        {servers.length > 0 && (
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-6">{getString('home.issues.title')}</h3>
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
             {servers
-              .filter(server => server.status === 'disconnected' || 
+              .filter(server => !server.isNoServer && (server.status === 'disconnected' || 
                 server.cpu > 80 || 
                 server.ram > 80 || 
                 server.disk > 80 || 
                 server.gpu > 80 ||
-                server.network > 80)
+                server.network > 80))
               .map(server => (
                 <div key={`issues-${server.id}`} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center space-x-4 mb-2 md:mb-0">
@@ -194,13 +197,14 @@ const HomePage: React.FC = () => {
               )}
           </div>
         </div>
+        )}
 
         {/* 경고 발생 서버 */}
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-6">{getString('home.warnings.title')}</h3>
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
             {servers
-              .filter(server => server.status === 'connected' && 
+              .filter(server => !server.isNoServer && server.status === 'connected' && 
                 ((server.cpu > 60 && server.cpu <= 80) || 
                  (server.ram > 60 && server.ram <= 80) ||
                  (server.disk > 60 && server.disk <= 80) ||
