@@ -262,7 +262,11 @@ const HomePage: React.FC = () => {
               .map(server => (
                 <div key={`${server.id}`} className="flex flex-col p-4 rounded-lg border border-gray-200">
                   <div className="flex items-center space-x-4 mb-2">
-                    <div className={`w-3 h-3 rounded-full ${server.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <div className={`w-3 h-3 rounded-full ${
+                      server.isNoServer 
+                        ? 'bg-gray-400' 
+                        : (server.status === 'connected' ? 'bg-green-500' : 'bg-red-500')
+                    }`} />
                     <h4 className="font-medium text-gray-800">{server.name}</h4>
                   </div>
                   <div className="pl-7 space-y-2">
